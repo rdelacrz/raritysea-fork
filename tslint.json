@@ -1,0 +1,19 @@
+{
+    "extends": [
+      "tslint:recommended"   
+    ],
+    "jsRules": {},
+    "rules": {
+      "arrow-parens": false,
+      "no-console": false,
+      "interface-name": false,
+      "max-line-length": false,
+      "no-var-requires": false,
+      "object-literal-sort-keys": false,
+      "quotemark": [true, "single"],
+      "no-string-literal": false,
+      "ordered-imports": false,
+      "semicolon": false
+    },
+    "rulesDirectory": []
+}
