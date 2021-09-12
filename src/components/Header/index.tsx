@@ -12,7 +12,7 @@ export const Header: FunctionComponent<PageProps> = (props) => {
   return (
     <AppBar color='primary'>
       <Toolbar>
-        RARITYSEA
+        DEGEN
       </Toolbar>
     </AppBar>
   );

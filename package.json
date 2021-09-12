@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@babel/core": "7.12.3",
+    "@fontsource/roboto": "^4.5.0",
     "@material-ui/core": "^4.12.3",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@storeon/localstorage": "^1.4.0",
