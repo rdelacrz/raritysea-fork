@@ -25,6 +25,16 @@
       "node",
       "webpack-env"
     ],
+    "paths": {
+      "@assets/*": ["assets/*"],
+      "@components": ["components"],
+      "@environment": ["environment"],
+      "@layouts": ["layouts"],
+      "@models": ["models"],
+      "@reduxConfig": ["reduxConfig"],
+      "@services": ["services"],
+      "@utilities": ["utilities"],
+    },
     "esModuleInterop": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
