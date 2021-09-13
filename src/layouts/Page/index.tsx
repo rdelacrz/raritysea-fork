@@ -1,5 +1,6 @@
-import React, { FunctionComponent } from 'react';
+import { Fragment, FunctionComponent } from 'react';
 import classNames from 'classnames';
+import { Container } from '@material-ui/core';
 import { Footer, Header } from '@components';
 
 import './styles.scss';
@@ -14,7 +15,11 @@ export const Page: FunctionComponent<PageProps> = (props) => {
     <div className={classNames('page-layout-wrapper', props.className)}>
       <Header />
       <main className={classNames('page-content-wrapper', props.pageContentClassName)}>
-        {props.children}
+        <Container maxWidth='lg'>
+          <Fragment>
+            {props.children}
+          </Fragment>
+        </Container>
       </main>
       <Footer />
     </div>
