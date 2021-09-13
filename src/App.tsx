@@ -1,23 +1,31 @@
-import React from 'react';
+import { providers } from 'ethers';
+import { ConnectedRouter } from 'connected-react-router';
 import { MuiThemeProvider } from '@material-ui/core';
 import { Provider } from 'react-redux';
-import { Page } from '@layouts';
-import { configureStore } from '@reduxConfig';
+import { Web3ReactProvider } from '@web3-react/core';
+import { configureStore, history } from '@reduxConfig';
+import RouterView from '@routes';
 import theme from './theme';
 
 import './App.scss';
 
 const store = configureStore();
 
+const getLibrary = (provider: any, connector: any) => {
+  return new providers.Web3Provider(provider);
+}
+
 function App() {
   return (
-    <Provider store={store}>
+    <Web3ReactProvider getLibrary={getLibrary}>
       <MuiThemeProvider theme={theme}>
-        <Page>
-          App
-        </Page>
+        <Provider store={store}>
+          <ConnectedRouter history={history}>
+            <RouterView />
+          </ConnectedRouter>
+        </Provider>
       </MuiThemeProvider>
-    </Provider>
+    </Web3ReactProvider>
   );
 }
 

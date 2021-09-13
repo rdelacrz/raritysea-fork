@@ -1,6 +1,7 @@
 import { applyMiddleware, compose as regularCompose, createStore, Store } from 'redux';
 import createSagaMiddleware, { SagaMiddleware } from 'redux-saga';
-import rootReducer from './reducers';
+import { history } from './history';
+import { createRootReducer } from './reducers';
 import SagaManager from './sagas/sagaManager';
 import { initialState, State } from './state';
 import { dataStorage } from '@utilities';
@@ -15,7 +16,7 @@ const compose: typeof regularCompose = (typeof window !== undefined) ?
 const handleDevelopmentHMR = (store: Store<State>, sagaMiddleware: SagaMiddleware) => {
   if (process.env.NODE_ENV === 'development' && module.hot) {
     module.hot.accept('./reducers', () => {
-      store.replaceReducer(rootReducer);
+      store.replaceReducer(createRootReducer(history));
     });
 
     module.hot.accept('./sagas/sagaManager', () => {
@@ -38,7 +39,7 @@ export const configureStore = () => {
   const sagaMiddleware = createSagaMiddleware();
 
   const store = createStore(
-    rootReducer,
+    createRootReducer(history),
     appState,
     compose(
       applyMiddleware(
@@ -61,4 +62,5 @@ export const configureStore = () => {
 
 // Exports redux items
 export * from './actions';
+export * from './history';
 export * from './state';

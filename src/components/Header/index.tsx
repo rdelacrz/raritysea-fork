@@ -1,18 +1,20 @@
-import React, { FunctionComponent, useCallback, useState } from 'react';
-import { AppBar, Toolbar } from '@material-ui/core';
+import React, { FunctionComponent } from 'react';
+import classNames from 'classnames';
+import { AppBar, Toolbar, Typography } from '@material-ui/core';
+import { ConnectWallet } from './ConnectWallet';
 
 import './styles.scss';
 
-interface PageProps {
+interface HeaderProps {
   className?: string;
-  pageContentClassName?: string;
 }
 
-export const Header: FunctionComponent<PageProps> = (props) => {
+export const Header: FunctionComponent<HeaderProps> = (props) => {
   return (
-    <AppBar color='primary'>
-      <Toolbar>
-        DEGEN
+    <AppBar className={classNames('header-wrapper', props.className)} color='primary'>
+      <Toolbar className='toolbar-wrapper'>
+        <Typography className='app-name' variant='h4' component='h1'>DEGEN</Typography>
+        <ConnectWallet />
       </Toolbar>
     </AppBar>
   );

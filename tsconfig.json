@@ -31,7 +31,9 @@
       "@environment": ["environment"],
       "@layouts": ["layouts"],
       "@models": ["models"],
+      "@pages": ["pages"],
       "@reduxConfig": ["reduxConfig"],
+      "@routes": ["routes"],
       "@services": ["services"],
       "@utilities": ["utilities"],
     },
@@ -40,7 +42,8 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "suppressImplicitAnyIndexErrors": true
   },
   "include": [
     "./**/*"
