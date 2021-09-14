@@ -1,10 +1,12 @@
 import { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import classNames from 'classnames';
+import { Web3Provider } from '@ethersproject/providers';
 import { Button } from '@material-ui/core';
 import Icon from '@mdi/react';
 import { mdiWalletPlusOutline } from '@mdi/js';
 import { useWeb3React } from '@web3-react/core';
-import { injectedConnector, truncateAddress } from '@utilities';
+import Web3 from 'web3';
+import { checkWalletConnection, injectedConnector, truncateAddress } from '@utilities';
 
 import './styles.scss';
 
@@ -14,10 +16,7 @@ interface ConnectWalletProps {
 
 export const ConnectWallet: FunctionComponent<ConnectWalletProps> = (props) => {
   // Gets Web3 attributes
-  const { activate, error } = useWeb3React();
-  const [address, setAddress] = useState('');
-
-  const web3 = window['web3'];
+  const { account, activate, error } = useWeb3React<Web3Provider>();
 
   useEffect(() => {
     // Error message: request of type 'wallet_requestPermissions' already pending for origin
@@ -26,11 +25,14 @@ export const ConnectWallet: FunctionComponent<ConnectWalletProps> = (props) => {
     }
   }, [error]);
 
+  // Automatically reconnects to wallet if previously authenticated
   useEffect(() => {
-    if (web3?.currentProvider) {
-      setAddress(web3.currentProvider.selectedAddress);
-    }
-  }, [address, web3?.currentProvider]);
+    checkWalletConnection(addrList => {
+      if ((addrList || []).length > 0) {
+        activate(injectedConnector);
+      }
+    });
+  });
 
   const handleConnectionClick = useCallback(() => {
     if (typeof window !== 'undefined') {
@@ -40,9 +42,9 @@ export const ConnectWallet: FunctionComponent<ConnectWalletProps> = (props) => {
 
   return (
     <div className={classNames('connect-wallet-wrapper', props.className)}>
-      {address ? (
+      {account ? (
         <Button id='walletAddressBtn' variant='contained'>
-          {truncateAddress(address)}
+          {truncateAddress(account)}
         </Button>
       ) : (
         <Button id='connectWalletBtn'

@@ -1,15 +1,14 @@
-import { ConnectedRouter } from 'connected-react-router';
 import { Web3Provider } from '@ethersproject/providers';
 import { MuiThemeProvider } from '@material-ui/core';
-import { Provider } from 'react-redux';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { BrowserRouter } from 'react-router-dom';
 import { Web3ReactProvider } from '@web3-react/core';
-import { configureStore, history } from '@reduxConfig';
 import RouterView from '@routes';
 import theme from './theme';
 
 import './App.scss';
 
-const store = configureStore();
+const queryClient = new QueryClient();
 
 const getLibrary = (provider: any) => {
   const library = new Web3Provider(provider);
@@ -19,15 +18,15 @@ const getLibrary = (provider: any) => {
 
 function App() {
   return (
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <MuiThemeProvider theme={theme}>
-        <Provider store={store}>
-          <ConnectedRouter history={history}>
+    <QueryClientProvider client={queryClient}>
+      <Web3ReactProvider getLibrary={getLibrary}>
+        <MuiThemeProvider theme={theme}>
+          <BrowserRouter>
             <RouterView />
-          </ConnectedRouter>
-        </Provider>
-      </MuiThemeProvider>
-    </Web3ReactProvider>
+          </BrowserRouter>
+        </MuiThemeProvider>
+      </Web3ReactProvider>
+    </QueryClientProvider>
   );
 }
 

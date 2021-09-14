@@ -28,6 +28,7 @@
     "paths": {
       "@assets/*": ["assets/*"],
       "@components": ["components"],
+      "@contract": ["contract"],
       "@environment": ["environment"],
       "@layouts": ["layouts"],
       "@models": ["models"],

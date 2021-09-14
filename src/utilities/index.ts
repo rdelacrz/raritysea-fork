@@ -6,4 +6,4 @@ export * from './connectors';
 export * from './constants';
 export * from './dataStorage';
 export * from './functions';
-export * from './providers';
+export * from './hooks';
