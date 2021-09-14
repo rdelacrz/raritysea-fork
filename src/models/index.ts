@@ -1,2 +1,2 @@
-export * from './ability-score';
-export * from './summoner';
+export * from './contractModels';
+export * from './viewModels';
