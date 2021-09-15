@@ -1,5 +1,6 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { attributesContractFetcher } from '@contract';
+import { FunctionComponent, useEffect, useState } from 'react';
+import { Grid } from '@material-ui/core';
+import { LoadingProgress, SummonerCard } from '@components';
 import { Page } from '@layouts';
 import { SummonerData } from '@models';
 import { compareBigNumbers, SortBy, useSummonerDataList} from '@utilities';
@@ -11,7 +12,7 @@ interface PageProps {
 }
 
 export const HomePage: FunctionComponent<PageProps> = (props) => {
-  const { data: summonerDataList, isSuccess } = useSummonerDataList();
+  const { data: summonerDataList, isLoading, isSuccess } = useSummonerDataList();
   const [summoners, setSummoners] = useState<SummonerData[]>([]);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.PRICE_HIGH_TO_LOW);
 
@@ -35,8 +36,6 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
     }
   }
 
-  console.log('initial')
-
   // Queries summoner data and sets it locally with given ordering
   useEffect(() => {
     if (isSuccess && summonerDataList) {
@@ -49,7 +48,17 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
 
   return (
     <Page className='home-page-wrapper'>
-      Home
+      {isLoading ? (
+        <LoadingProgress />
+      ) : (
+        <Grid className='summoners-grid-wrapper' container spacing={3}>
+          {summoners.map((summonerData, index) => (
+            <Grid item xs={2} sm={3} md={4} key={index}>
+              <SummonerCard summonerData={summonerData} />
+            </Grid>
+          ))}
+        </Grid>
+      )}
     </Page>
   );
 }

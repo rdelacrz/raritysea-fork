@@ -1,4 +1,5 @@
 import attributesAbi from './attributes-abi.json';
+import rarityAbi from './rarity-abi.json';
 import summonersAbi from './summoners-abi.json';
 
 // Contract only runs properly on the Fantom Opera network
@@ -12,3 +13,7 @@ export const summonersContractAbi = summonersAbi;
 // Attributes contract information
 export const attributesContractAddress = '0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1';
 export const attributesContractAbi = attributesAbi;
+
+// Rarity contract information
+export const rarityContractAddress = '0xce761D788DF608BD21bdd59d6f4B54b2e27F25Bb';
+export const rarityContractAbi = rarityAbi;

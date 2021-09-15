@@ -1,11 +1,10 @@
-import { FunctionComponent, useCallback, useEffect, useState } from 'react';
+import { FunctionComponent, useCallback, useEffect } from 'react';
 import classNames from 'classnames';
 import { Web3Provider } from '@ethersproject/providers';
 import { Button } from '@material-ui/core';
 import Icon from '@mdi/react';
 import { mdiWalletPlusOutline } from '@mdi/js';
 import { useWeb3React } from '@web3-react/core';
-import Web3 from 'web3';
 import { checkWalletConnection, injectedConnector, truncateAddress } from '@utilities';
 
 import './styles.scss';

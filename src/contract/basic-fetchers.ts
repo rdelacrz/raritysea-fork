@@ -1,7 +1,8 @@
 import { providers } from 'ethers';
 import { Contract } from '@ethersproject/contracts';
 import {
-  attributesContractAddress, attributesContractAbi, compatibleRPCUrl, summonersContractAbi, summonersContractAddress
+  attributesContractAddress, attributesContractAbi, compatibleRPCUrl, rarityContractAddress, rarityContractAbi,
+  summonersContractAbi, summonersContractAddress
 } from './constants';
 
 export const summonersContractFetcher = <T>(method: string, ...args: any[]): Promise<T> => {
@@ -13,5 +14,11 @@ export const summonersContractFetcher = <T>(method: string, ...args: any[]): Pro
 export const attributesContractFetcher = <T>(method: string, ...args: any[]): Promise<T> => {
   const provider = new providers.JsonRpcProvider(compatibleRPCUrl);
   const contract = new Contract(attributesContractAddress, attributesContractAbi, provider);
+  return contract[method](...args);
+}
+
+export const rarityContractFetcher = <T>(method: string, ...args: any[]): Promise<T> => {
+  const provider = new providers.JsonRpcProvider(compatibleRPCUrl);
+  const contract = new Contract(rarityContractAddress, rarityContractAbi, provider);
   return contract[method](...args);
 }
