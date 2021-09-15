@@ -1,8 +1,8 @@
 import { FunctionComponent } from 'react';
 import classNames from 'classnames';
-import { Card, Grid, CircularProgress } from '@material-ui/core';
+import { Card, Grid } from '@material-ui/core';
 import { SummonerData } from '@models';
-import { ClassMap } from '@utilities';
+import { ClassMap, ClassImageMap } from '@utilities';
 
 import './styles.scss';
 
@@ -12,11 +12,12 @@ interface SummonerCardProps {
 }
 
 export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
+  const summonerClassName = ClassMap[props.summonerData.class?.toNumber()];
   return (
     <Card className={classNames('summoner-card-wrapper', props.className)}>
-      <div className='class-name'>{ClassMap[props.summonerData.class?.toNumber()]}</div>
+      <div className='class-name'>{summonerClassName}</div>
       <div className='img-container'>
-        Image Here
+        <img src={ClassImageMap[props.summonerData.class?.toNumber()]} alt={`${summonerClassName} Image`} />
       </div>
       <div className='token-id'>#{props.summonerData.summoner.tokenID?.toString()}</div>
       <Grid className='attributes-grid' container>
