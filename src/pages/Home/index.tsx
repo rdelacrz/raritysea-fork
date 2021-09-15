@@ -3,7 +3,7 @@ import { Grid } from '@material-ui/core';
 import { LoadingProgress, SummonerCard } from '@components';
 import { Page } from '@layouts';
 import { SummonerData } from '@models';
-import { compareBigNumbers, SortBy, useSummonerDataList} from '@utilities';
+import { compareBigNumbers, SortBy, useSummonerDataList } from '@utilities';
 
 import './styles.scss';
 
@@ -12,9 +12,10 @@ interface PageProps {
 }
 
 export const HomePage: FunctionComponent<PageProps> = (props) => {
-  const { data: summonerDataList, isLoading, isSuccess } = useSummonerDataList();
   const [summoners, setSummoners] = useState<SummonerData[]>([]);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.PRICE_HIGH_TO_LOW);
+
+  const { summonerDataList, partiallyLoaded } = useSummonerDataList();
 
   /**
    * Returns compare function that sorts summoners in a list based on current sortBy method.
@@ -38,17 +39,16 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
 
   // Queries summoner data and sets it locally with given ordering
   useEffect(() => {
-    if (isSuccess && summonerDataList) {
+    if (summonerDataList) {
       const compareFn = getSummonerComparer();
       const initialOrdering = summonerDataList.sort(compareFn);
       setSummoners(initialOrdering);
-      console.log(initialOrdering)
     }
-  }, [summonerDataList, isSuccess]);
+  }, [summonerDataList]);
 
   return (
     <Page className='home-page-wrapper'>
-      {isLoading ? (
+      {!partiallyLoaded ? (
         <LoadingProgress />
       ) : (
         <Grid className='summoners-grid-wrapper' container spacing={3}>

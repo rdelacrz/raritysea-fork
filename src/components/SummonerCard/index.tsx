@@ -12,12 +12,13 @@ interface SummonerCardProps {
 }
 
 export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
-  const summonerClassName = ClassMap[props.summonerData.class?.toNumber()];
+  const summonerClassSrc = props.summonerData.class ? ClassImageMap[props.summonerData.class.toNumber()] : null;
+  const summonerClassName = props.summonerData.class ? ClassMap[props.summonerData.class.toNumber()] : '';
   return (
     <Card className={classNames('summoner-card-wrapper', props.className)}>
       <div className='class-name'>{summonerClassName}</div>
       <div className='img-container'>
-        <img src={ClassImageMap[props.summonerData.class?.toNumber()]} alt={`${summonerClassName} Image`} />
+        <img src={summonerClassSrc} alt={`${summonerClassName} Image`} />
       </div>
       <div className='token-id'>#{props.summonerData.summoner.tokenID?.toString()}</div>
       <Grid className='attributes-grid' container>
@@ -28,22 +29,22 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
           EXP : {props.summonerData.xp?.toString()}
         </Grid>
         <Grid className='attribute-container' item xs={12} sm={6}>
-          STR : {props.summonerData.abilityScore.strength}
+          STR : {props.summonerData.abilityScore?.strength}
         </Grid>
         <Grid className='attribute-container' item xs={12} sm={6}>
-          CON : {props.summonerData.abilityScore.constitution}
+          CON : {props.summonerData.abilityScore?.constitution}
         </Grid>
         <Grid className='attribute-container' item xs={12} sm={6}>
-          DEX : {props.summonerData.abilityScore.dexterity}
+          DEX : {props.summonerData.abilityScore?.dexterity}
         </Grid>
         <Grid className='attribute-container' item xs={12} sm={6}>
-          INT : {props.summonerData.abilityScore.intelligence}
+          INT : {props.summonerData.abilityScore?.intelligence}
         </Grid>
         <Grid className='attribute-container' item xs={12} sm={6}>
-          WIS : {props.summonerData.abilityScore.wisdom}
+          WIS : {props.summonerData.abilityScore?.wisdom}
         </Grid>
         <Grid className='attribute-container' item xs={12} sm={6}>
-          CHA : {props.summonerData.abilityScore.charisma}
+          CHA : {props.summonerData.abilityScore?.charisma}
         </Grid>
       </Grid>
       <div className='price-row'>
