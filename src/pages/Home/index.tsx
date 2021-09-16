@@ -5,7 +5,9 @@ import { Refresh } from '@material-ui/icons';
 import { LoadingProgress, Pagination, SummonerCard } from '@components';
 import { Page } from '@layouts';
 import { SummonerData } from '@models';
-import { ClassMap, getSummonerComparer, PAGE_SIZE, SortBy, SummonerClass, SummonerClassList, useSummonerDataList } from '@utilities';
+import {
+  ClassMap, getSummonerComparer, PAGE_SIZE, SortBy, SortByDropdownList, SummonerClass, SummonerClassList, useSummonerDataList
+} from '@utilities';
 
 import './styles.scss';
 
@@ -19,14 +21,20 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
   const [summonerClass, setSummonerClass] = useState<SummonerClass>(SummonerClass.ALL);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.PRICE_HIGH_TO_LOW);
   const [pageIndex, setPageIndex] = useState<number>(0);
+  const [queriesResetting, setQueriesResetting] = useState(false);
+  const [pendingRefresh, setPendingRefresh] = useState(false);
 
-  const { summonerDataList, partiallyLoaded } = useSummonerDataList();
+  const { summonerDataList, partiallyLoaded, partiallyFetched } = useSummonerDataList();
   const queryClient = useQueryClient();
 
   /* Functions */
 
-  const refreshSummoners = () => {
-    queryClient.invalidateQueries('getAllSummoners');
+  const refreshSummoners = async () => {
+    setQueriesResetting(true);
+    await queryClient.cancelQueries('getAllSummoners', { exact: true });
+    await queryClient.resetQueries('getAllSummoners', { exact: true });
+    setPendingRefresh(true);    // Must be placed here after reset, or else it will be reset prematurely due to partiallyFetched being true from previous fetch
+    setQueriesResetting(false);
   }
 
   const handleSummonerClassChange = (value: any) => {
@@ -43,9 +51,16 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
   // Queries summoner data and sets it locally with given ordering
   useEffect(() => {
     if (summonerDataList.length > 0) {
-      setSummoners(summonerDataList);
+      setSummoners(summonerDataList.slice());
     }
   }, [summonerDataList]);
+
+  // Once data is partially refetched (summoner data pulled, some attributes loaded), concludes refresh
+  useEffect(() => {
+    if (pendingRefresh && partiallyFetched) {
+      setPendingRefresh(false);
+    }
+  }, [pendingRefresh, partiallyFetched]);
 
   /* Calculated variables */
 
@@ -80,71 +95,50 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
     return filteredSummoners.slice(startIndex, startIndex + PAGE_SIZE);
   }, [filteredSummoners, startIndex]);
 
+  // Shows loading progress if data is being loaded for first time or refreshed via refresh button
+  const dataLoading = !partiallyLoaded || queriesResetting || pendingRefresh;
+
   return (
     <Page className='home-page-wrapper'>
       <h2 className='page-header'>Order List</h2>
       <div className='refresh-button-row'>
         <Button id='refreshSummonersBtn' color='secondary' variant='contained' startIcon={<Refresh />}
-            onClick={refreshSummoners}>
+            disabled={dataLoading} onClick={refreshSummoners}>
           Refresh
         </Button>
       </div>
 
       <div className='dropdown-row-wrapper'>
-        <FormControl className='dropdown-form-field'>
-          <Select id='summonerClassDropdown' color='secondary' variant='outlined'
-              value={summonerClass} onChange={e => handleSummonerClassChange(e.target.value)}>
-            {SummonerClassList.map(summonerClassItem => (
-              <MenuItem value={summonerClassItem}>
-                {summonerClassItem === SummonerClass.ALL ? 'All Jobs' : `Job : ${ClassMap[summonerClassItem]}`}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl className='dropdown-form-field'>
-          <Select id='sortByDropdown' color='secondary' variant='outlined'
-              value={sortBy} onChange={e => handleSortByChange(e.target.value)}>
-            <MenuItem value={SortBy.PRICE_LOW_TO_HIGH}>
-              Price : Low to High
-            </MenuItem>
-            <MenuItem value={SortBy.PRICE_HIGH_TO_LOW}>
-              Price : High to Low
-            </MenuItem>
-            <MenuItem value={SortBy.CHAR_ID_LOW_TO_HIGH}>
-              Character ID : Low to High
-            </MenuItem>
-            <MenuItem value={SortBy.CHAR_ID_HIGH_TO_LOW}>
-              Character ID : High to Low
-            </MenuItem>
-            <MenuItem value={SortBy.ATTR_LV}>
-              Attribute: LV
-            </MenuItem>
-            <MenuItem value={SortBy.ATTR_EXP}>
-              Attribute: EXP
-            </MenuItem>
-            <MenuItem value={SortBy.ATTR_STR}>
-              Attribute: STR
-            </MenuItem>
-            <MenuItem value={SortBy.ATTR_CON}>
-              Attribute: CON
-            </MenuItem>
-            <MenuItem value={SortBy.ATTR_DEX}>
-              Attribute: DEX
-            </MenuItem>
-            <MenuItem value={SortBy.ATTR_INT}>
-              Attribute: INT
-            </MenuItem>
-            <MenuItem value={SortBy.ATTR_WIS}>
-              Attribute: WIS
-            </MenuItem>
-            <MenuItem value={SortBy.ATTR_CHA}>
-              Attribute: CHA
-            </MenuItem>
-          </Select>
-        </FormControl>
+        <Grid className='dropdown-grid-wrapper' container spacing={3}>
+          <Grid className='spacer' item xs='auto' sm={12} md={4} />
+          <Grid item xs={12} sm={6} md={4}>
+            <FormControl className='dropdown-form-field' fullWidth>
+              <Select id='summonerClassDropdown' color='secondary' variant='outlined'
+                  value={summonerClass} onChange={e => handleSummonerClassChange(e.target.value)}>
+                {SummonerClassList.map(summonerClassItem => (
+                  <MenuItem value={summonerClassItem} key={summonerClassItem}>
+                    {summonerClassItem === SummonerClass.ALL ? 'All Jobs' : `Job : ${ClassMap[summonerClassItem]}`}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <FormControl className='dropdown-form-field' fullWidth>
+              <Select id='sortByDropdown' color='secondary' variant='outlined'
+                  value={sortBy} onChange={e => handleSortByChange(e.target.value)}>
+                {SortByDropdownList.map((text, value) => (
+                  <MenuItem value={value} key={value}>
+                    {text}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
       </div>
 
-      {!partiallyLoaded ? (
+      {dataLoading ? (
         <LoadingProgress />
       ) : (
         <div className='summoner-display-wrapper'>

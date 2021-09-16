@@ -10,12 +10,18 @@ import { AbilityScore, Summoner, SummonerData } from '@models';
 import { Status } from '@utilities';
 
 export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) => {
-  const [partiallyLoaded, setPartiallyLoaded] = useState<boolean>(false);
-  const [fullyLoaded, setFullyLoaded] = useState<boolean>(false);
   const [summonerDataList, setSummonerDataList] = useState<SummonerData[]>([]);
 
+  // Set only once in life cycle of hook
+  const [partiallyLoaded, setPartiallyLoaded] = useState<boolean>(false);
+  const [fullyLoaded, setFullyLoaded] = useState<boolean>(false);
+
+  // Set every time new data is fetched
+  const [partiallyFetched, setPartiallyFetched] = useState<boolean>(false);
+  const [fullyFetched, setFullyFetched] = useState<boolean>(false);
+
   // Gets summoners first, which will then be filtered and used to acquire other attributes
-  const { data: summoners, isFetched: summonersFetched } = useGetAllSummoners();
+  const { data: summoners, isFetching: summonersFetching, isFetched: summonersFetched } = useGetAllSummoners();
   const filteredSummoners = (summoners || []).filter(s => s.status === Status.LISTED);
 
   const promiseQuery = new PQueue({ concurrency: promiseConcurrency });
@@ -25,6 +31,9 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
 
     async function fetchSummonerAttributes() {
       if (summonersFetched) {
+        setPartiallyFetched(false);
+        setFullyFetched(false);
+
         // Splits the summoners into chunks of given size in order to efficiently query corresponding attribute data
         const summonerGroups = filteredSummoners.reduce((groups, summoner) => {
           if (groups.length === 0 || groups[groups.length - 1].length === chunkSize) {
@@ -63,8 +72,8 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
           const xpList = await promiseQuery.addAll(xpPromiseFuncs);
           promiseQuery.clear();
 
-          // Ceases updates once query has been stopped on clean up
-          if (stopQuery) {
+          // Ceases updates once query has been stopped on clean up or summoners are refetching
+          if (stopQuery || summonersFetching) {
             break;
           }
 
@@ -79,9 +88,11 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
           accumulatedSummonerDataList = [...accumulatedSummonerDataList, ...currentSummonerDataList];
           setSummonerDataList(accumulatedSummonerDataList);
           setPartiallyLoaded(true);
+          setPartiallyFetched(true);
         }
 
         setFullyLoaded(true);
+        setFullyFetched(true);
       }
     }
 
@@ -91,5 +102,11 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
   }, [summonersFetched]);
 
   // Combines summoners with associated ability scores and other attributes
-  return { summonerDataList, partiallyLoaded, fullyLoaded };
+  return {
+    summonerDataList,
+    partiallyLoaded,
+    fullyLoaded,
+    partiallyFetched: partiallyFetched && summonersFetched,   // Not considered fetched unless summoners data has been fetched
+    fullyFetched: fullyFetched && summonersFetched,   // Not considered fetched unless summoners data has been fetched
+  };
 }

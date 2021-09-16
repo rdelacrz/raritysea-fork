@@ -29,6 +29,21 @@ export enum SortBy {
   ATTR_CHA,
 }
 
+export const SortByDropdownList = [
+  'Price : Low to High',
+  'Price : High to Low',
+  'Character ID : Low to High',
+  'Character ID : High to Low',
+  'Attribute : LV',
+  'Attribute : EXP',
+  'Attribute : STR',
+  'Attribute : CON',
+  'Attribute : DEX',
+  'Attribute : INT',
+  'Attribute : WIS',
+  'Attribute : CHA',
+];
+
 export enum SummonerClass {
   ALL = 0,
   BARBARIAN = 1,

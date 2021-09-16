@@ -38,10 +38,11 @@ const theme = createTheme({
           border: 'solid 1px hsla(0, 0%, 100%, .7)',
         },
       },
+      input: {
+        padding: '10.5px 14px',
+      },
     },
     MuiSelect: {
-      root: {
-      },
       icon: {
         color: 'white',
       },
