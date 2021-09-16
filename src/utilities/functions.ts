@@ -59,17 +59,17 @@ export const getSummonerComparer = (sortBy: SortBy) => {
     case SortBy.ATTR_EXP:
       return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.xp, d1.xp);
     case SortBy.ATTR_STR:
-      return (d1: SummonerData, d2: SummonerData) => d2.abilityScore.strength - d1.abilityScore.strength;
+      return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.strength || 0) - (d1.abilityScore?.strength || 0);
     case SortBy.ATTR_CON:
-      return (d1: SummonerData, d2: SummonerData) => d2.abilityScore.constitution - d1.abilityScore.constitution;
+      return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.constitution || 0) - (d1.abilityScore?.constitution || 0);
     case SortBy.ATTR_DEX:
-      return (d1: SummonerData, d2: SummonerData) => d2.abilityScore.dexterity - d1.abilityScore.dexterity;
+      return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.dexterity || 0) - (d1.abilityScore?.dexterity || 0);
     case SortBy.ATTR_INT:
-      return (d1: SummonerData, d2: SummonerData) => d2.abilityScore.intelligence - d1.abilityScore.intelligence;
+      return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.intelligence || 0) - (d1.abilityScore?.intelligence || 0);
     case SortBy.ATTR_WIS:
-      return (d1: SummonerData, d2: SummonerData) => d2.abilityScore.wisdom - d1.abilityScore.wisdom;
+      return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.wisdom || 0) - (d1.abilityScore?.wisdom || 0);
     case SortBy.ATTR_CHA:
-      return (d1: SummonerData, d2: SummonerData) => d2.abilityScore.charisma - d1.abilityScore.charisma;
+      return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.charisma || 0) - (d1.abilityScore?.charisma || 0);
     default:
       return undefined;
   }

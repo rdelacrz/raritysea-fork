@@ -1,7 +1,7 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { Status } from '@utilities';
 
-export interface Summoner extends Array<number | string | BigNumber> {
+export interface Summoner {
   listId: BigNumber;
   tokenID: BigNumber;
   owner: string;

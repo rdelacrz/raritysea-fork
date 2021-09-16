@@ -33,7 +33,9 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
     setQueriesResetting(true);
     await queryClient.cancelQueries('getAllSummoners', { exact: true });
     await queryClient.resetQueries('getAllSummoners', { exact: true });
-    setPendingRefresh(true);    // Must be placed here after reset, or else it will be reset prematurely due to partiallyFetched being true from previous fetch
+
+    // Must be placed here after query reset, or else it will prematurely be set false due to partiallyFetched being true from previous fetch
+    setPendingRefresh(true);
     setQueriesResetting(false);
   }
 
@@ -79,7 +81,7 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
     }
 
     // Applies summoner class filter
-    return sortedSummoners.filter(s => s.class.toNumber() === summonerClass);
+    return sortedSummoners.filter(s => s.class?.toNumber() === summonerClass);
   }, [sortedSummoners, summonerClass]);
 
   // Determines pagination values based on page index and size

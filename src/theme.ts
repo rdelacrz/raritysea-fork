@@ -11,6 +11,7 @@ const theme = createTheme({
     },
   },
   overrides: {
+    // Clickable elements
     MuiButton: {
       root: {
         fontSize: '0.875rem',
@@ -27,6 +28,15 @@ const theme = createTheme({
         color: '#29b6f6',
       },
     },
+
+    // Cards
+    MuiCard: {
+      root: {
+        backgroundColor: '#EEEEEE',
+      },
+    },
+
+    // Inputs
     MuiOutlinedInput: {
       root: {
         background: 'hsla(0,0%,100%,.08)',

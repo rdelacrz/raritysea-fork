@@ -1,21 +1,40 @@
 .summoner-card-wrapper {
     background-color: #EEEEEE;
     color: black;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 14px);
     padding: 10px;
     .class-name {
         font-weight: 700;
         text-align: center;
     }
-    .img-container {
-        display: flex;
-        justify-content: center;
-        img {
-            height: 200px;
+    .summoner-information-wrapper {
+        flex: 1;
+        .img-container {
+            display: flex;
+            justify-content: center;
+            img {
+                height: 200px;
+            }
+        }
+        .token-id, .attribute-container, .price-row {
+            font-weight: 500;
+            padding: 5px 0;
+            overflow-wrap: break-word;
+            text-align: center;
+        }
+        .price-row {
+            font-weight: 700;
+            padding: 10px 0;
         }
     }
-    .token-id, .attribute-container, .price-row {
-        font-weight: 500;
-        padding: 5px 0;
-        text-align: center;
+    .purchase-button {
+        background-color: #4CAF50;
+        color: white;
+        width: 100%;
+        &:hover {
+            background-color: rgba(#4CAF50, 0.7);
+        }
     }
 }

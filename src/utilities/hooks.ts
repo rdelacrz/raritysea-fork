@@ -21,7 +21,7 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
   const [fullyFetched, setFullyFetched] = useState<boolean>(false);
 
   // Gets summoners first, which will then be filtered and used to acquire other attributes
-  const { data: summoners, isFetching: summonersFetching, isFetched: summonersFetched } = useGetAllSummoners();
+  const { data: summoners, isFetched: summonersFetched } = useGetAllSummoners();
   const filteredSummoners = (summoners || []).filter(s => s.status === Status.LISTED);
 
   const promiseQuery = new PQueue({ concurrency: promiseConcurrency });
@@ -50,30 +50,34 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
           // Ability scores
           const abilityScorePromiseFuncs = summonerGroup.map(
             s => () => attributesContractFetcher<AbilityScore>('ability_scores', s.tokenID.toString())
+              .catch(err => { console.error(err); return undefined; })
           );
           const abilityScores = await promiseQuery.addAll(abilityScorePromiseFuncs);
 
           // Classes
           const classPromiseFuncs = summonerGroup.map(
             s => () => rarityContractFetcher<BigNumber>('class', s.tokenID.toString())
+              .catch(err => { console.error(err); return undefined; })
           );
           const classes = await promiseQuery.addAll(classPromiseFuncs);
 
           // Levels
           const levelPromiseFuncs = summonerGroup.map(
             s => () => rarityContractFetcher<BigNumber>('level', s.tokenID.toString())
+              .catch(err => { console.error(err); return undefined; })
           );
           const levels = await promiseQuery.addAll(levelPromiseFuncs);
 
           // Experience
           const xpPromiseFuncs = summonerGroup.map(
             s => () => rarityContractFetcher<BigNumber>('xp', s.tokenID.toString())
+              .catch(err => { console.error(err); return undefined; })
           );
           const xpList = await promiseQuery.addAll(xpPromiseFuncs);
           promiseQuery.clear();
 
           // Ceases updates once query has been stopped on clean up or summoners are refetching
-          if (stopQuery || summonersFetching) {
+          if (stopQuery) {
             break;
           }
 

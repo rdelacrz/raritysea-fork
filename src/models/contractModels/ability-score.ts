@@ -1,4 +1,4 @@
-export interface AbilityScore extends Array<number> {
+export interface AbilityScore {
   strength: number;
   dexterity: number;
   constitution: number;
