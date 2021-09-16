@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { BigNumber } from '@ethersproject/bignumber';
 import { Button, Card, Grid } from '@material-ui/core';
 import { ShoppingCart } from '@material-ui/icons';
-import { SummonerData } from '@models';
+import { Summoner, SummonerData } from '@models';
 import { ClassMap, ClassImageMap } from '@utilities';
 
 import './styles.scss';
@@ -11,7 +11,7 @@ import './styles.scss';
 interface SummonerCardProps {
   className?: string;
   summonerData: SummonerData;
-  onPurchase?: (tokenId: BigNumber) => void;
+  onPurchase?: (summoner: Summoner) => void;
 }
 
 const formatBigNumberValue = (bigNumber?: BigNumber, decimalInsertionFromRight = 18) => {
@@ -42,9 +42,11 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
 
   const divisor = BigNumber.from('1000000000000000000');
 
+  const price = props.summonerData.summoner.price?.div(divisor)?.toString();
+
   const handlePurchase = () => {
-    if (props.onPurchase && props.summonerData.summoner.tokenID) {
-      props.onPurchase(props.summonerData.summoner.tokenID);
+    if (props.onPurchase) {
+      props.onPurchase(props.summonerData.summoner);
     }
   }
 
@@ -83,7 +85,7 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
           </Grid>
         </Grid>
         <div className='price-row'>
-          Price: {props.summonerData.summoner.price?.div(divisor)?.toString()} FTM
+          Price: {price} FTM
         </div>
       </div>
       <Button id={`purchaseSummoner_${tokenId}`} className='purchase-button' variant='contained'

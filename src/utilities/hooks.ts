@@ -5,9 +5,11 @@
 import { useEffect, useState } from 'react';
 import PQueue from 'p-queue/dist';
 import { BigNumber } from '@ethersproject/bignumber';
-import { attributesContractFetcher, rarityContractFetcher, useGetAllSummoners } from '@contract';
+import { useWeb3React } from '@web3-react/core';
+import { attributesContractFetcher, rarityContractFetcher, useBuySummoner as useBuy, useGetAllSummoners } from '@contract';
 import { AbilityScore, Summoner, SummonerData } from '@models';
 import { Status } from '@utilities';
+import { Web3Provider } from '@ethersproject/providers';
 
 export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) => {
   const [summonerDataList, setSummonerDataList] = useState<SummonerData[]>([]);
@@ -113,4 +115,9 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
     partiallyFetched: partiallyFetched && summonersFetched,   // Not considered fetched unless summoners data has been fetched
     fullyFetched: fullyFetched && summonersFetched,   // Not considered fetched unless summoners data has been fetched
   };
+}
+
+export const useBuySummoner = () => {
+  const { library } = useWeb3React<Web3Provider>();
+  return useBuy(library?.getSigner())
 }

@@ -1,15 +1,17 @@
 import { FunctionComponent, useEffect, useMemo, useState } from 'react';
-import { useQueryClient } from 'react-query'
+import { useQueryClient } from 'react-query';
 import { Button, FormControl, Grid, MenuItem, Select } from '@material-ui/core';
 import { Refresh } from '@material-ui/icons';
 import { LoadingProgress, Pagination, SummonerCard } from '@components';
 import { Page } from '@layouts';
-import { SummonerData } from '@models';
+import { Summoner, SummonerData } from '@models';
 import {
-  ClassMap, getSummonerComparer, PAGE_SIZE, SortBy, SortByDropdownList, SummonerClass, SummonerClassList, useSummonerDataList
+  ClassMap, getSummonerComparer, PAGE_SIZE, SortBy, SortByDropdownList, SummonerClass, SummonerClassList,
+  useBuySummoner, useSummonerDataList
 } from '@utilities';
 
 import './styles.scss';
+import { BigNumber } from '@ethersproject/bignumber';
 
 interface PageProps {
   className?: string;
@@ -24,8 +26,10 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
   const [queriesResetting, setQueriesResetting] = useState(false);
   const [pendingRefresh, setPendingRefresh] = useState(false);
 
-  const { summonerDataList, partiallyLoaded, partiallyFetched } = useSummonerDataList();
+  /* Hook variables */
   const queryClient = useQueryClient();
+  const { summonerDataList, partiallyLoaded, partiallyFetched } = useSummonerDataList();
+  const buySummonerMutation = useBuySummoner();
 
   /* Functions */
 
@@ -48,6 +52,13 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
   const handleSortByChange = (value: any) => {
     const sortByValue = parseInt(value, 10) as SortBy;
     setSortBy(sortByValue);
+  }
+
+  const handlePurchase = (summoner: Summoner) => {
+    buySummonerMutation.mutate({
+      payableAmount: summoner.price,
+      listId: summoner.listId,
+    });
   }
 
   // Queries summoner data and sets it locally with given ordering
@@ -147,7 +158,7 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
           <Grid className='summoners-grid-wrapper' container spacing={3}>
             {paginatedSummoners.map((summonerData, index) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                <SummonerCard summonerData={summonerData} />
+                <SummonerCard summonerData={summonerData} onPurchase={handlePurchase} />
               </Grid>
             ))}
             </Grid>
