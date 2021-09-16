@@ -44,6 +44,21 @@ export enum SummonerClass {
   WIZARD = 11,
 }
 
+export const SummonerClassList = [
+  SummonerClass.ALL,
+  SummonerClass.BARBARIAN,
+  SummonerClass.BARD,
+  SummonerClass.CLERIC,
+  SummonerClass.DRUID,
+  SummonerClass.FIGHTER,
+  SummonerClass.MONK,
+  SummonerClass.PALADIN,
+  SummonerClass.RANGER,
+  SummonerClass.ROGUE,
+  SummonerClass.SORCERER,
+  SummonerClass.WIZARD
+];
+
 /**
  * Maps ids to their corresponding class names.
  */

@@ -27,6 +27,20 @@ const theme = createTheme({
         color: '#29b6f6',
       },
     },
+    MuiOutlinedInput: {
+      root: {
+        background: 'hsla(0,0%,100%,.08)',
+        color: 'white',
+      },
+      notchedOutline: {
+        borderColor: 'hsla(0, 0%, 100%, .3)',
+      },
+    },
+    MuiSelect: {
+      icon: {
+        color: 'white',
+      },
+    },
   },
 });
 
