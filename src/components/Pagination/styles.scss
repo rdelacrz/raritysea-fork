@@ -1,0 +1,19 @@
+.pagination-wrapper {
+    padding: 20px 0;
+    text-align: center;
+    button {
+        margin: 0.3rem;
+        min-width: 34px;
+        padding: 5px;
+        &.active {
+            background-color: #1976D2;
+            color: white;
+        }
+    }
+    .ellipsis {
+        display: inline-flex;
+        align-items: flex-end;
+        color: white;
+        padding: 0 5px 0.8rem;
+    }
+}

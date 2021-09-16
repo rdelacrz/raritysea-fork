@@ -29,6 +29,21 @@ export enum SortBy {
   ATTR_CHA,
 }
 
+export enum SummonerClass {
+  ALL = 0,
+  BARBARIAN = 1,
+  BARD = 2,
+  CLERIC = 3,
+  DRUID = 4,
+  FIGHTER = 5,
+  MONK = 6,
+  PALADIN = 7,
+  RANGER = 8,
+  ROGUE = 9,
+  SORCERER = 10,
+  WIZARD = 11,
+}
+
 /**
  * Maps ids to their corresponding class names.
  */
@@ -59,3 +74,5 @@ export const ClassImageMap = {
   10: require('@assets/classes/sorcerer.png').default,
   11: require('@assets/classes/wizard.png').default,
 }
+
+export const PAGE_SIZE = 8;

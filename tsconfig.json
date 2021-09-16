@@ -12,6 +12,7 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "allowJs": true,
+    "downlevelIteration": true,
     "noEmit": true,
     "lib": [
       "es6",

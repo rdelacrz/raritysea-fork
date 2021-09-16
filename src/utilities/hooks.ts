@@ -21,8 +21,11 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
   const promiseQuery = new PQueue({ concurrency: promiseConcurrency });
 
   useEffect(() => {
+    let stopQuery = false;
+
     async function fetchSummonerAttributes() {
       if (summonersFetched) {
+        // Splits the summoners into chunks of given size in order to efficiently query corresponding attribute data
         const summonerGroups = filteredSummoners.reduce((groups, summoner) => {
           if (groups.length === 0 || groups[groups.length - 1].length === chunkSize) {
             groups.push([summoner]);
@@ -32,6 +35,7 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
           return groups;
         }, [] as Summoner[][]);
 
+        // Iterates through chunks and updates summoner data every time more attributes have been queried
         let accumulatedSummonerDataList: SummonerData[] = [];
         for (const summonerGroup of summonerGroups) {
           // Ability scores
@@ -59,6 +63,11 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
           const xpList = await promiseQuery.addAll(xpPromiseFuncs);
           promiseQuery.clear();
 
+          // Ceases updates once query has been stopped on clean up
+          if (stopQuery) {
+            break;
+          }
+
           const currentSummonerDataList = summonerGroup.map<SummonerData>((summoner, index) => ({
             summoner,
             abilityScore: abilityScores[index],
@@ -77,6 +86,8 @@ export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) =>
     }
 
     fetchSummonerAttributes();
+
+    return () => { stopQuery = true };
   }, [summonersFetched]);
 
   // Combines summoners with associated ability scores and other attributes
