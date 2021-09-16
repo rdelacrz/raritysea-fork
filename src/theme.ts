@@ -30,13 +30,18 @@ const theme = createTheme({
     MuiOutlinedInput: {
       root: {
         background: 'hsla(0,0%,100%,.08)',
+        border: 'solid 1px hsla(0, 0%, 100%, .3)',
         color: 'white',
-      },
-      notchedOutline: {
-        borderColor: 'hsla(0, 0%, 100%, .3)',
+        transition: 'all 100ms ease-in-out',
+        '&:hover': {
+          background: 'hsla(0, 0%, 100%, .15)',
+          border: 'solid 1px hsla(0, 0%, 100%, .7)',
+        },
       },
     },
     MuiSelect: {
+      root: {
+      },
       icon: {
         color: 'white',
       },
