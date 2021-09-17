@@ -7,4 +7,6 @@ export interface SummonerData {
   class?: BigNumber;
   level?: BigNumber;
   xp?: BigNumber;
+  gold?: BigNumber;
+  skills?: number[];
 }

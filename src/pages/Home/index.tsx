@@ -1,6 +1,6 @@
 import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
-import { Button, FormControl, Grid, MenuItem, Select } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import { Refresh } from '@material-ui/icons';
 import { DropdownField, LoadingProgress, Pagination, SummonerCard } from '@components';
 import { Page } from '@layouts';
@@ -122,7 +122,7 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
 
   return (
     <Page className='home-page-wrapper'>
-      <h2 className='page-header'>Marketplace</h2>
+      <h2 className='page-header'>Summoner Marketplace</h2>
       <div className='refresh-button-row'>
         <Button id='refreshSummonersBtn' color='secondary' variant='contained' startIcon={<Refresh />}
             disabled={dataLoading} onClick={refreshSummoners}>
@@ -133,11 +133,11 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
       <div className='dropdown-row-wrapper'>
         <Grid className='dropdown-grid-wrapper' container spacing={3}>
           <Grid item xs={12} sm={6}>
-            <DropdownField id='summonerClassDropdown' label='Select Job' value={sortBy} options={summonerClassOptions}
+            <DropdownField id='summonerClassDropdown' label='Select Job' value={summonerClass} options={summonerClassOptions}
               onChange={handleSummonerClassChange} />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <DropdownField id='sortByDropdown' label='Select Sort' value={summonerClass} options={sortByOptions}
+            <DropdownField id='sortByDropdown' label='Select Sort' value={sortBy} options={sortByOptions}
               onChange={handleSortByChange} />
           </Grid>
         </Grid>

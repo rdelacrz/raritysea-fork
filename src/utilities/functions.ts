@@ -70,6 +70,8 @@ export const getSummonerComparer = (sortBy: SortBy) => {
       return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.wisdom || 0) - (d1.abilityScore?.wisdom || 0);
     case SortBy.ATTR_CHA:
       return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.charisma || 0) - (d1.abilityScore?.charisma || 0);
+    case SortBy.INVENTORY_GOLD:
+      return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.gold, d1.gold);
     default:
       return undefined;
   }

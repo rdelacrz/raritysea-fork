@@ -3,7 +3,7 @@
  */
 
 const environment = {
-  providerApiKey: 'RZYFMBGY7U1C1Q296XJ3EKGS7GMQZ556V5', // TODO: Replace this later with official Degen API key
+  providerApiKey: 'C83U1BE8YGJ6X3DKJ3JI8CFDT1UUWUNC1H', // TODO: Replace this later with official Degen API key
 };
 
 export default environment;

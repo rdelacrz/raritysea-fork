@@ -43,6 +43,7 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
   const divisor = BigNumber.from('1000000000000000000');
 
   const price = props.summonerData.summoner.price?.div(divisor)?.toString();
+  const gold = props.summonerData.gold?.div(divisor)?.toBigInt()?.toLocaleString();
 
   const handlePurchase = () => {
     if (props.onPurchase) {
@@ -82,6 +83,9 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
           </Grid>
           <Grid className='attribute-container' item xs={6}>
             CHA : {props.summonerData.abilityScore?.charisma}
+          </Grid>
+          <Grid className='attribute-container' item xs={6}>
+            Gold : {gold}
           </Grid>
         </Grid>
         <div className='price-row'>

@@ -27,6 +27,7 @@ export enum SortBy {
   ATTR_INT,
   ATTR_WIS,
   ATTR_CHA,
+  INVENTORY_GOLD,
 }
 
 export const SortByDropdownList = [
@@ -42,6 +43,7 @@ export const SortByDropdownList = [
   'Attribute : INT',
   'Attribute : WIS',
   'Attribute : CHA',
+  'Inventory : Gold',
 ];
 
 export enum SummonerClass {

@@ -6,12 +6,15 @@ import { useEffect, useState } from 'react';
 import PQueue from 'p-queue/dist';
 import { BigNumber } from '@ethersproject/bignumber';
 import { useWeb3React } from '@web3-react/core';
-import { attributesContractFetcher, rarityContractFetcher, useBuySummoner as useBuy, useGetAllSummoners } from '@contract';
-import { AbilityScore, Summoner, SummonerData } from '@models';
+import {
+  attributesContractFetcher, goldContractFetcher, rarityContractFetcher, skillsContractFetcher,
+  useBuySummoner as useBuy, useGetAllSummoners
+} from '@contract';
+import { AbilityScore, SummonerData } from '@models';
 import { Status } from '@utilities';
 import { Web3Provider } from '@ethersproject/providers';
 
-export const useSummonerDataList = (chunkSize = 8, promiseConcurrency = 100) => {
+export const useSummonerDataList = (chunkSize = 8, promiseConcurrency = 50) => {
   const [summonerDataList, setSummonerDataList] = useState<SummonerData[]>([]);
 
   // Set only once in life cycle of hook
@@ -36,19 +39,13 @@ export const useSummonerDataList = (chunkSize = 8, promiseConcurrency = 100) => 
         setPartiallyFetched(false);
         setFullyFetched(false);
 
-        // Splits the summoners into chunks of given size in order to efficiently query corresponding attribute data
-        const summonerGroups = filteredSummoners.reduce((groups, summoner) => {
-          if (groups.length === 0 || groups[groups.length - 1].length === chunkSize) {
-            groups.push([summoner]);
-          } else {
-            groups[groups.length - 1].push(summoner);
-          }
-          return groups;
-        }, [] as Summoner[][]);
-
-        // Iterates through chunks and updates summoner data every time more attributes have been queried
         let accumulatedSummonerDataList: SummonerData[] = [];
-        for (const summonerGroup of summonerGroups) {
+
+        // Iterates through summoners in chunks and updates summoner data every time more attributes have been queried
+        const splicedSummoners = filteredSummoners.slice();
+        while (splicedSummoners.length) {
+          const summonerGroup = splicedSummoners.splice(0, chunkSize);
+
           // Ability scores
           const abilityScorePromiseFuncs = summonerGroup.map(
             s => () => attributesContractFetcher<AbilityScore>('ability_scores', s.tokenID.toString())
@@ -76,6 +73,21 @@ export const useSummonerDataList = (chunkSize = 8, promiseConcurrency = 100) => 
               .catch(err => { console.error(err); return undefined; })
           );
           const xpList = await promiseQuery.addAll(xpPromiseFuncs);
+
+          // Experience
+          const goldPromiseFuncs = summonerGroup.map(
+            s => () => goldContractFetcher<BigNumber>('balanceOf', s.tokenID.toString())
+              .catch(err => { console.error(err); return undefined; })
+          );
+          const goldList = await promiseQuery.addAll(goldPromiseFuncs);
+
+          // Skils
+          const skillsPromiseFuncs = summonerGroup.map(
+            s => () => skillsContractFetcher<number[]>('get_skills', s.tokenID.toString())
+              .catch(err => { console.error(err); return undefined; })
+          );
+          const skillsList = await promiseQuery.addAll(skillsPromiseFuncs);
+
           promiseQuery.clear();
 
           // Ceases updates once query has been stopped on clean up or summoners are refetching
@@ -89,6 +101,8 @@ export const useSummonerDataList = (chunkSize = 8, promiseConcurrency = 100) => 
             class: classes[index],
             level: levels[index],
             xp: xpList[index],
+            gold: goldList[index],
+            skills: skillsList[index],
           }));
 
           accumulatedSummonerDataList = [...accumulatedSummonerDataList, ...currentSummonerDataList];

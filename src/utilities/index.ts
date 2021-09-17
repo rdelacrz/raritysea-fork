@@ -7,3 +7,4 @@ export * from './constants';
 export * from './dataStorage';
 export * from './functions';
 export * from './hooks';
+export * from './query-react-extension';

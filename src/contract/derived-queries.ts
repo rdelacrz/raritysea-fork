@@ -1,12 +1,14 @@
 /**
- * Functions using the basic fetchers to perform specific asynchronous functionalities.
+ * Functions using the basic fetchers to perform specific asynchronous functionalities and link them to
+ * react-query queries, which will ensure that data is regularly updated.
  */
 
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation, useQuery, useQueries, useQueryClient } from 'react-query';
 import { Signer } from 'ethers';
 import { BigNumber } from '@ethersproject/bignumber';
-import { summonersContractFetcher, summonersContractFetcherWithSigner } from '@contract';
+import { skillsContractFetcher, summonersContractFetcher, summonersContractFetcherWithSigner } from '@contract';
 import { Summoner } from '@models';
+import { SummonerClass, SummonerClassList } from '@utilities';
 
 export const useGetAllSummoners = () => (
   useQuery('getAllSummoners', async () => summonersContractFetcher<Summoner[]>('getAllSummoners'))
@@ -28,4 +30,20 @@ export const useBuySummoner = (signer?: Signer) => {
       },
     },
   )
+}
+
+export const useGetClassSkills = () => {
+  const summonerClasses = SummonerClassList.filter(c => c !== SummonerClass.ALL);
+  return useQueries(summonerClasses.map(summonerClass => ({
+    queryKey: ['getClassSkills', summonerClass],
+    queryFn: () => skillsContractFetcher<boolean[]>('class_skills', summonerClass),
+  })));
+}
+
+export const useGetClassSkillNames = () => {
+  const summonerClasses = SummonerClassList.filter(c => c !== SummonerClass.ALL);
+  return useQueries(summonerClasses.map(summonerClass => ({
+    queryKey: ['getClassSkillNames', summonerClass],
+    queryFn: () => skillsContractFetcher<string[]>('class_skills_by_name', summonerClass),
+  })));
 }
