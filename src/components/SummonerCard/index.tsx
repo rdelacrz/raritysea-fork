@@ -55,32 +55,32 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
       <div className='class-name'>{summonerClassName}</div>
       <div className='summoner-information-wrapper'>
         <div className='img-container'>
-          <img src={summonerClassSrc} alt={`${summonerClassName} Image`} />
+          <img src={summonerClassSrc} alt={`${summonerClassName}`} />
         </div>
         <div className='token-id'>#{tokenId}</div>
         <Grid className='attributes-grid' container>
-          <Grid className='attribute-container' item xs={12} sm={6}>
+          <Grid className='attribute-container' item xs={6}>
             LV : {props.summonerData.level?.toString()}
           </Grid>
-          <Grid className='attribute-container' item xs={12} sm={6}>
+          <Grid className='attribute-container' item xs={6}>
             EXP : {formatBigNumberValue(props.summonerData.xp)}
           </Grid>
-          <Grid className='attribute-container' item xs={12} sm={6}>
+          <Grid className='attribute-container' item xs={6}>
             STR : {props.summonerData.abilityScore?.strength}
           </Grid>
-          <Grid className='attribute-container' item xs={12} sm={6}>
+          <Grid className='attribute-container' item xs={6}>
             CON : {props.summonerData.abilityScore?.constitution}
           </Grid>
-          <Grid className='attribute-container' item xs={12} sm={6}>
+          <Grid className='attribute-container' item xs={6}>
             DEX : {props.summonerData.abilityScore?.dexterity}
           </Grid>
-          <Grid className='attribute-container' item xs={12} sm={6}>
+          <Grid className='attribute-container' item xs={6}>
             INT : {props.summonerData.abilityScore?.intelligence}
           </Grid>
-          <Grid className='attribute-container' item xs={12} sm={6}>
+          <Grid className='attribute-container' item xs={6}>
             WIS : {props.summonerData.abilityScore?.wisdom}
           </Grid>
-          <Grid className='attribute-container' item xs={12} sm={6}>
+          <Grid className='attribute-container' item xs={6}>
             CHA : {props.summonerData.abilityScore?.charisma}
           </Grid>
         </Grid>

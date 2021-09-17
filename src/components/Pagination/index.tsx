@@ -99,7 +99,7 @@ export const Pagination: FunctionComponent<PaginationProps> = (props) => {
           </Button>
         ) : (
           displayEllipsis(i) && (
-            <div className='ellipsis'>
+            <div className='ellipsis' key={i}>
               ...
             </div>
           )

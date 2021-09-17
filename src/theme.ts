@@ -4,7 +4,7 @@ import { inherits } from 'util';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#37474f',
+      main: '#1976D2',
     },
     secondary: {
       main: '#F5F5F5',

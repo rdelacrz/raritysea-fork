@@ -11,7 +11,7 @@ import { AbilityScore, Summoner, SummonerData } from '@models';
 import { Status } from '@utilities';
 import { Web3Provider } from '@ethersproject/providers';
 
-export const useSummonerDataList = (chunkSize = 16, promiseConcurrency = 100) => {
+export const useSummonerDataList = (chunkSize = 8, promiseConcurrency = 100) => {
   const [summonerDataList, setSummonerDataList] = useState<SummonerData[]>([]);
 
   // Set only once in life cycle of hook

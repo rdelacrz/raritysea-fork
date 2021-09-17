@@ -2,7 +2,7 @@ import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { Button, FormControl, Grid, MenuItem, Select } from '@material-ui/core';
 import { Refresh } from '@material-ui/icons';
-import { LoadingProgress, Pagination, SummonerCard } from '@components';
+import { DropdownField, LoadingProgress, Pagination, SummonerCard } from '@components';
 import { Page } from '@layouts';
 import { Summoner, SummonerData } from '@models';
 import {
@@ -11,7 +11,6 @@ import {
 } from '@utilities';
 
 import './styles.scss';
-import { BigNumber } from '@ethersproject/bignumber';
 
 interface PageProps {
   className?: string;
@@ -56,7 +55,7 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
 
   const handlePurchase = (summoner: Summoner) => {
     buySummonerMutation.mutate({
-      payableAmount: summoner.price,
+      price: summoner.price,
       listId: summoner.listId,
     });
   }
@@ -111,9 +110,19 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
   // Shows loading progress if data is being loaded for first time or refreshed via refresh button
   const dataLoading = !partiallyLoaded || queriesResetting || pendingRefresh;
 
+  // Sets up dropdown options
+  const summonerClassOptions = SummonerClassList.map(summonerClassItem => {
+    if (summonerClassItem === SummonerClass.ALL) {
+      return { value: summonerClassItem, text: 'All Jobs' };
+    } else {
+      return { value: summonerClassItem, text: `Job : ${ClassMap[summonerClassItem]}` };
+    }
+  });
+  const sortByOptions = SortByDropdownList.map((text, value) => ({ text, value }));
+
   return (
     <Page className='home-page-wrapper'>
-      <h2 className='page-header'>Order List</h2>
+      <h2 className='page-header'>Marketplace</h2>
       <div className='refresh-button-row'>
         <Button id='refreshSummonersBtn' color='secondary' variant='contained' startIcon={<Refresh />}
             disabled={dataLoading} onClick={refreshSummoners}>
@@ -123,30 +132,13 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
 
       <div className='dropdown-row-wrapper'>
         <Grid className='dropdown-grid-wrapper' container spacing={3}>
-          <Grid className='spacer' item xs='auto' sm={12} md={4} />
-          <Grid item xs={12} sm={6} md={4}>
-            <FormControl className='dropdown-form-field' fullWidth>
-              <Select id='summonerClassDropdown' color='secondary' variant='outlined'
-                  value={summonerClass} onChange={e => handleSummonerClassChange(e.target.value)}>
-                {SummonerClassList.map(summonerClassItem => (
-                  <MenuItem value={summonerClassItem} key={summonerClassItem}>
-                    {summonerClassItem === SummonerClass.ALL ? 'All Jobs' : `Job : ${ClassMap[summonerClassItem]}`}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+          <Grid item xs={12} sm={6}>
+            <DropdownField id='summonerClassDropdown' label='Select Job' value={sortBy} options={summonerClassOptions}
+              onChange={handleSummonerClassChange} />
           </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <FormControl className='dropdown-form-field' fullWidth>
-              <Select id='sortByDropdown' color='secondary' variant='outlined'
-                  value={sortBy} onChange={e => handleSortByChange(e.target.value)}>
-                {SortByDropdownList.map((text, value) => (
-                  <MenuItem value={value} key={value}>
-                    {text}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+          <Grid item xs={12} sm={6}>
+            <DropdownField id='sortByDropdown' label='Select Sort' value={summonerClass} options={sortByOptions}
+              onChange={handleSortByChange} />
           </Grid>
         </Grid>
       </div>

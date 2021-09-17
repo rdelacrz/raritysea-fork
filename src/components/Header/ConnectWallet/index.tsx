@@ -15,7 +15,7 @@ interface ConnectWalletProps {
 
 export const ConnectWallet: FunctionComponent<ConnectWalletProps> = (props) => {
   // Gets Web3 attributes
-  const { account, activate, error } = useWeb3React<Web3Provider>();
+  const { account, activate, active, error } = useWeb3React<Web3Provider>();
 
   useEffect(() => {
     // Error message: request of type 'wallet_requestPermissions' already pending for origin
@@ -26,12 +26,12 @@ export const ConnectWallet: FunctionComponent<ConnectWalletProps> = (props) => {
 
   // Automatically reconnects to wallet if previously authenticated
   useEffect(() => {
-    checkWalletConnection(addrList => {
-      if ((addrList || []).length > 0) {
+    checkWalletConnection(existingAddresses => {
+      if ((existingAddresses || []).length > 0 && !active) {
         activate(injectedConnector);
       }
     });
-  });
+  }, [active]);
 
   const handleConnectionClick = useCallback(() => {
     if (typeof window !== 'undefined') {
