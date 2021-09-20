@@ -21,11 +21,13 @@ export const truncateAddress = (address: string, ellipsisCount = 3) => {
   return address;
 }
 
-export const compareBigNumbers = (bigNumber1?: BigNumber, bigNumber2?: BigNumber) => {
+export const compareBigNumbers = (bigNumber1?: string, bigNumber2?: string) => {
   if (bigNumber1 !== undefined && bigNumber2 !== undefined) {
-    if (bigNumber1.lt(bigNumber2)) {
+    const bn1 = BigNumber.from(bigNumber1);
+    const bn2 = BigNumber.from(bigNumber2);
+    if (bn1.lt(bn2)) {
       return -1;
-    } else if (bigNumber1.gt(bigNumber2)) {
+    } else if (bn1.gt(bn2)) {
       return 1;
     } else {
       return 0;

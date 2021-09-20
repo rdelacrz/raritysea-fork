@@ -22,24 +22,17 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
   const [summonerClass, setSummonerClass] = useState<SummonerClass>(SummonerClass.ALL);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.PRICE_HIGH_TO_LOW);
   const [pageIndex, setPageIndex] = useState<number>(0);
-  const [queriesResetting, setQueriesResetting] = useState(false);
-  const [pendingRefresh, setPendingRefresh] = useState(false);
 
   /* Hook variables */
   const queryClient = useQueryClient();
-  const { summonerDataList, partiallyLoaded, partiallyFetched } = useSummonerDataList();
+  const { data: summonerDataList, isLoading, isFetched } = useSummonerDataList();
   const buySummonerMutation = useBuySummoner();
 
   /* Functions */
 
   const refreshSummoners = async () => {
-    setQueriesResetting(true);
-    await queryClient.cancelQueries('getAllSummoners', { exact: true });
-    await queryClient.resetQueries('getAllSummoners', { exact: true });
-
-    // Must be placed here after query reset, or else it will prematurely be set false due to partiallyFetched being true from previous fetch
-    setPendingRefresh(true);
-    setQueriesResetting(false);
+    await queryClient.cancelQueries('getSummonerDataList', { exact: true });
+    await queryClient.resetQueries('getSummonerDataList', { exact: true });
   }
 
   const handleSummonerClassChange = (value: any) => {
@@ -62,17 +55,10 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
 
   // Queries summoner data and sets it locally with given ordering
   useEffect(() => {
-    if (summonerDataList.length > 0) {
-      setSummoners(summonerDataList.slice());
+    if ((summonerDataList as SummonerData[] || []).length > 0 && isFetched) {
+      setSummoners((summonerDataList as SummonerData[]).slice());
     }
   }, [summonerDataList]);
-
-  // Once data is partially refetched (summoner data pulled, some attributes loaded), concludes refresh
-  useEffect(() => {
-    if (pendingRefresh && partiallyFetched) {
-      setPendingRefresh(false);
-    }
-  }, [pendingRefresh, partiallyFetched]);
 
   /* Calculated variables */
 
@@ -91,7 +77,7 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
     }
 
     // Applies summoner class filter
-    return sortedSummoners.filter(s => s.class?.toNumber() === summonerClass);
+    return sortedSummoners.filter(s => s.class === summonerClass.toString());
   }, [sortedSummoners, summonerClass]);
 
   // Determines pagination values based on page index and size
@@ -108,7 +94,7 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
   }, [filteredSummoners, startIndex]);
 
   // Shows loading progress if data is being loaded for first time or refreshed via refresh button
-  const dataLoading = !partiallyLoaded || queriesResetting || pendingRefresh;
+  const dataLoading = isLoading || !isFetched;
 
   // Sets up dropdown options
   const summonerClassOptions = SummonerClassList.map(summonerClassItem => {

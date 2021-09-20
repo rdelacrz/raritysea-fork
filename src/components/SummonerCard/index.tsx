@@ -14,7 +14,7 @@ interface SummonerCardProps {
   onPurchase?: (summoner: Summoner) => void;
 }
 
-const formatBigNumberValue = (bigNumber?: BigNumber, decimalInsertionFromRight = 18) => {
+const formatBigNumberValue = (bigNumber?: string, decimalInsertionFromRight = 18) => {
   if (bigNumber !== undefined) {
     let numStr = bigNumber.toString();
     const insertDecimalIndex = numStr.length >= decimalInsertionFromRight ? numStr.length - decimalInsertionFromRight : numStr.length;
@@ -35,15 +35,16 @@ const formatBigNumberValue = (bigNumber?: BigNumber, decimalInsertionFromRight =
 }
 
 export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
-  const summonerClassSrc = props.summonerData.class ? ClassImageMap[props.summonerData.class.toNumber()] : null;
-  const summonerClassName = props.summonerData.class ? ClassMap[props.summonerData.class.toNumber()] : '';
+  const classId = parseInt(props.summonerData.class || '0', 10);
+  const summonerClassSrc = props.summonerData.class ? ClassImageMap[classId] : null;
+  const summonerClassName = props.summonerData.class ? ClassMap[classId] : '';
 
   const tokenId = props.summonerData.summoner.tokenID?.toString();
 
   const divisor = BigNumber.from('1000000000000000000');
 
-  const price = props.summonerData.summoner.price?.div(divisor)?.toString();
-  const gold = props.summonerData.gold?.div(divisor)?.toBigInt()?.toLocaleString();
+  const price = props.summonerData.summoner.price ? BigNumber.from(props.summonerData.summoner.price).div(divisor)?.toString() : null;
+  const gold = props.summonerData.gold ? BigNumber.from(props.summonerData.gold).div(divisor).toBigInt()?.toLocaleString() : null;
 
   const handlePurchase = () => {
     if (props.onPurchase) {

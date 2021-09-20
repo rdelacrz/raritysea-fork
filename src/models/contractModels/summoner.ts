@@ -2,11 +2,11 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { Status } from '@utilities';
 
 export interface Summoner {
-  listId: BigNumber;
-  tokenID: BigNumber;
+  listId: string;
+  tokenID: string;
   owner: string;
   buyer: string;
-  price: BigNumber;
-  payout: BigNumber;
+  price: string;
+  payout: string;
   status: Status;
 }

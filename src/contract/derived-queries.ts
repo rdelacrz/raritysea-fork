@@ -17,7 +17,7 @@ export const useGetAllSummoners = () => (
 export const useBuySummoner = (signer?: Signer) => {
   const queryClient = useQueryClient();
   return useMutation('buySummoner',
-    (args: { price: BigNumber, listId: BigNumber }) => {
+    (args: { price: string, listId: string }) => {
       if (signer) {
         return summonersContractFetcherWithSigner<any>(signer, 'buy', args.price, args.listId);
       } else {
