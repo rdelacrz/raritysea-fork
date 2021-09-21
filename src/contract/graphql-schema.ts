@@ -2,8 +2,8 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import { compatibleRPCUrl, summonersContractAbi, summonersContractAddress, attributesContractAbi, attributesContractAddress, rarityContractAbi, rarityContractAddress, goldContractAbi, goldContractAddress, skillsContractAbi, skillsContractAddress } from '@contract';
-import { AbilityScore, Summoner, SummonerData } from '@models';
-import { Status } from '@utilities';
+import { AbilityScore, ClassSkillSet, Summoner } from '@models';
+import { Status, SummonerClassList } from '@utilities';
 
 const schema = `
   type Summoner {
@@ -35,8 +35,15 @@ const schema = `
     skills: [Int!]!
   }
 
+  type ClassSkillSet {
+    id: Int!
+    skillName: String
+    active: Boolean!
+  }
+
   type Query {
     summonerDataList: [SummonerData]!
+    classSkills: [[ClassSkillSet!]!]!
   }
 `;
 
@@ -83,12 +90,40 @@ const resolvers = {
       return skillsContract.methods.get_skills(summoner.tokenID.toString()).call();
     },
   },
+  ClassSkillSet: {
+    id: (classSkillSet: ClassSkillSet) => classSkillSet.id,
+    skillName: (classSkillSet: ClassSkillSet) => classSkillSet.skillName,
+    active: (classSkillSet: ClassSkillSet) => classSkillSet.active,
+  },
   Query: {
     summonerDataList: async () => {
       const summonerContract = new web3.eth.Contract(summonersContractAbi as unknown as AbiItem, summonersContractAddress);
       const summoners = await summonerContract.methods.getAllSummoners().call() as Summoner[];
       return summoners.filter(s => s.status.toString() === Status.LISTED.toString());
-    }
+    },
+    classSkills: async () => {
+      const skillsContract = new web3.eth.Contract(skillsContractAbi as unknown as AbiItem, skillsContractAddress);
+
+      const classSkills: ClassSkillSet[][] = [];
+      for (const summonerClass of SummonerClassList.slice(1)) {
+        const activeSkills = await skillsContract.methods.class_skills(summonerClass).call() as boolean[];
+        const skillNames = await skillsContract.methods.class_skills_by_name(summonerClass).call() as string[];
+        let skillNameIndex = 0;
+        
+        const classSkillSets = activeSkills.map((active, id) => {
+          const classSkillSet: ClassSkillSet = { id, active };
+          if (active && skillNameIndex < skillNames.length) {
+            classSkillSet.skillName = skillNames[skillNameIndex];
+            skillNameIndex += 1;
+          }
+          return classSkillSet;
+        });
+
+        classSkills.push(classSkillSets);
+      }
+
+      return classSkills;
+    },
   },
 }
 

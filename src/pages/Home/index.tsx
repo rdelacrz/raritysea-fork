@@ -7,7 +7,7 @@ import { Page } from '@layouts';
 import { Summoner, SummonerData } from '@models';
 import {
   ClassMap, getSummonerComparer, PAGE_SIZE, SortBy, SortByDropdownList, SummonerClass, SummonerClassList,
-  useBuySummoner, useSummonerDataList
+  useBuySummoner, useClassSkills, useSummonerDataList
 } from '@utilities';
 
 import './styles.scss';
@@ -26,6 +26,7 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
   /* Hook variables */
   const queryClient = useQueryClient();
   const { data: summonerDataList, isLoading, isFetched } = useSummonerDataList();
+  const { data: classSkills } = useClassSkills();
   const buySummonerMutation = useBuySummoner();
 
   /* Functions */
