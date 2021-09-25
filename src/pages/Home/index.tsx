@@ -135,11 +135,15 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
       ) : (
         <div className='summoner-display-wrapper'>
           <Grid className='summoners-grid-wrapper' container spacing={3}>
-            {paginatedSummoners.map((summonerData, index) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                <SummonerCard summonerData={summonerData} onPurchase={handlePurchase} />
-              </Grid>
-            ))}
+              {paginatedSummoners.map((summonerData, index) => {
+                const summonerClassIndex = summonerData.class ? parseInt(summonerData.class, 10) - 1 : undefined;
+                const classSkillSet = classSkills && summonerClassIndex !== undefined ? classSkills[summonerClassIndex] : [];
+                return (
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                    <SummonerCard summonerData={summonerData} classSkillSet={classSkillSet} onPurchase={handlePurchase} />
+                  </Grid>
+                );
+              })}
             </Grid>
             <Pagination currentIndex={pageIndex} pageCount={pageCount} onPageChange={setPageIndex} />
         </div>

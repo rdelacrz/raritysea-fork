@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import classNames from 'classnames';
 import { Link } from '@material-ui/core';
-import { summonersContractAddress } from '@contract';
+import { summonersContractAddress } from '@contracts';
 import { generateFtmContractLink, truncateAddress } from '@utilities';
 
 import './styles.scss';

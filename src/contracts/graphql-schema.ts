@@ -1,10 +1,19 @@
 import { makeExecutableSchema } from '@graphql-tools/schema';
-import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
-import { compatibleRPCUrl, summonersContractAbi, summonersContractAddress, attributesContractAbi, attributesContractAddress, rarityContractAbi, rarityContractAddress, goldContractAbi, goldContractAddress, skillsContractAbi, skillsContractAddress } from '@contract';
+import { compatibleRPCUrl, summonersContractAbi, summonersContractAddress, attributesContractAbi, attributesContractAddress, rarityContractAbi, rarityContractAddress, goldContractAbi, goldContractAddress, skillsContractAbi, skillsContractAddress } from 'contracts';
 import { AbilityScore, ClassSkillSet, Summoner } from '@models';
 import { Status, SummonerClassList } from '@utilities';
+import Web3 from 'web3';
 
+const web3 = new Web3(new Web3.providers.HttpProvider(compatibleRPCUrl));
+
+// Contracts
+const summonerContract = new web3.eth.Contract(summonersContractAbi as any, summonersContractAddress);
+const attributesContract = new web3.eth.Contract(attributesContractAbi as any, attributesContractAddress);
+const rarityContract = new web3.eth.Contract(rarityContractAbi as any, rarityContractAddress);
+const goldContract = new web3.eth.Contract(goldContractAbi as any, goldContractAddress);
+const skillsContract = new web3.eth.Contract(skillsContractAbi as any, skillsContractAddress);
+
+// GraphQL Schema
 const schema = `
   type Summoner {
     listId: String!
@@ -47,8 +56,7 @@ const schema = `
   }
 `;
 
-const web3 = new Web3(new Web3.providers.HttpProvider(compatibleRPCUrl));
-
+// GraphQL resolvers
 const resolvers = {
   Summoner: {
     listId: (summoner: any) => summoner.listId,
@@ -70,23 +78,18 @@ const resolvers = {
   SummonerData: {
     summoner: (summoner: Summoner) => summoner,
     abilityScore: async (summoner: Summoner) => {
-      const attributesContract = new web3.eth.Contract(attributesContractAbi as unknown as AbiItem, attributesContractAddress);
       return attributesContract.methods.ability_scores(summoner.tokenID.toString()).call();
     },
     class: async (summoner: Summoner) => {
-      const rarityContract = new web3.eth.Contract(rarityContractAbi as unknown as AbiItem, rarityContractAddress);
       return rarityContract.methods.class(summoner.tokenID.toString()).call();
     },
     level: async (summoner: Summoner) => {
-      const rarityContract = new web3.eth.Contract(rarityContractAbi as unknown as AbiItem, rarityContractAddress);
       return rarityContract.methods.level(summoner.tokenID.toString()).call();
     },
     gold: async (summoner: Summoner) => {
-      const goldContract = new web3.eth.Contract(goldContractAbi as unknown as AbiItem, goldContractAddress);
       return goldContract.methods.balanceOf(summoner.tokenID.toString()).call();
     },
     skills: async (summoner: Summoner) => {
-      const skillsContract = new web3.eth.Contract(skillsContractAbi as unknown as AbiItem, skillsContractAddress);
       return skillsContract.methods.get_skills(summoner.tokenID.toString()).call();
     },
   },
@@ -97,19 +100,16 @@ const resolvers = {
   },
   Query: {
     summonerDataList: async () => {
-      const summonerContract = new web3.eth.Contract(summonersContractAbi as unknown as AbiItem, summonersContractAddress);
       const summoners = await summonerContract.methods.getAllSummoners().call() as Summoner[];
       return summoners.filter(s => s.status.toString() === Status.LISTED.toString());
     },
     classSkills: async () => {
-      const skillsContract = new web3.eth.Contract(skillsContractAbi as unknown as AbiItem, skillsContractAddress);
-
       const classSkills: ClassSkillSet[][] = [];
       for (const summonerClass of SummonerClassList.slice(1)) {
         const activeSkills = await skillsContract.methods.class_skills(summonerClass).call() as boolean[];
         const skillNames = await skillsContract.methods.class_skills_by_name(summonerClass).call() as string[];
         let skillNameIndex = 0;
-        
+
         const classSkillSets = activeSkills.map((active, id) => {
           const classSkillSet: ClassSkillSet = { id, active };
           if (active && skillNameIndex < skillNames.length) {

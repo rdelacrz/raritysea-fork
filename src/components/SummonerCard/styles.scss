@@ -1,10 +1,16 @@
 .summoner-card-wrapper {
+    position: relative;
     background-color: #EEEEEE;
     color: black;
     display: flex;
     flex-direction: column;
     height: calc(100% - 16px);
     padding: 10px;
+    .skill-button {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
     .class-name {
         font-weight: 700;
         text-align: center;
@@ -35,6 +41,30 @@
         width: 100%;
         &:hover {
             background-color: rgba(#4CAF50, 0.7);
+        }
+    }
+}
+
+.skills-backdrop {
+    color: white;
+    flex-direction: column;
+    .skills-header {
+        text-align: center;
+    }
+    .skills-display-wrapper {
+        max-width: 550px;
+        .skill-value {
+            font-weight: bold;
+            text-align: center;
+        }
+    }
+    .close-button-row {
+        padding-top: 20px;
+        text-align: center;
+        .close-button {
+            background-color: #FF8C84;
+            color: white;
+            width: 100px;
         }
     }
 }

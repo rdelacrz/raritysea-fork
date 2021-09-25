@@ -1,9 +1,9 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useState } from 'react';
 import classNames from 'classnames';
 import { BigNumber } from '@ethersproject/bignumber';
-import { Button, Card, Grid } from '@material-ui/core';
-import { ShoppingCart } from '@material-ui/icons';
-import { Summoner, SummonerData } from '@models';
+import { Backdrop, Button, Card, Grid, IconButton } from '@material-ui/core';
+import { BuildRounded, ShoppingCart } from '@material-ui/icons';
+import { ClassSkillSet, Summoner, SummonerData } from '@models';
 import { ClassMap, ClassImageMap } from '@utilities';
 
 import './styles.scss';
@@ -11,6 +11,7 @@ import './styles.scss';
 interface SummonerCardProps {
   className?: string;
   summonerData: SummonerData;
+  classSkillSet: ClassSkillSet[];
   onPurchase?: (summoner: Summoner) => void;
 }
 
@@ -35,6 +36,23 @@ const formatBigNumberValue = (bigNumber?: string, decimalInsertionFromRight = 18
 }
 
 export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
+  /* State variables */
+  const [showSkills, setShowSkills] = useState(false);
+
+  /* Functions */
+
+  const handlePurchase = () => {
+    if (props.onPurchase) {
+      props.onPurchase(props.summonerData.summoner);
+    }
+  }
+
+  const toggleSkills = () => {
+    setShowSkills(!showSkills);
+  }
+
+  /* Regular variables */
+
   const classId = parseInt(props.summonerData.class || '0', 10);
   const summonerClassSrc = props.summonerData.class ? ClassImageMap[classId] : null;
   const summonerClassName = props.summonerData.class ? ClassMap[classId] : '';
@@ -46,14 +64,28 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
   const price = props.summonerData.summoner.price ? BigNumber.from(props.summonerData.summoner.price).div(divisor)?.toString() : null;
   const gold = props.summonerData.gold ? BigNumber.from(props.summonerData.gold).div(divisor).toBigInt()?.toLocaleString() : null;
 
-  const handlePurchase = () => {
-    if (props.onPurchase) {
-      props.onPurchase(props.summonerData.summoner);
-    }
-  }
 
   return (
     <Card className={classNames('summoner-card-wrapper', props.className)}>
+      <IconButton className='skill-button' title='Skills' onClick={toggleSkills}>
+        <BuildRounded className='skill-icon' />
+      </IconButton>
+      <Backdrop className='skills-backdrop' open={showSkills} onClick={toggleSkills}>
+        <h2 className='skills-header'>#{tokenId} Skills</h2>
+        <Grid className='skills-display-wrapper' container spacing={2}>
+          {(props.summonerData.skills || []).map((skillValue, skillIndex) => (
+            (props.classSkillSet || []).length > skillIndex && props.classSkillSet[skillIndex].active && (
+              <Grid className='skill-value' item xs={4} key={skillIndex}>
+                {props.classSkillSet[skillIndex].skillName}: {skillValue}
+              </Grid>
+            )
+          ))}
+        </Grid>
+        <div className='close-button-row'>
+            <Button className='close-button' variant='contained' onClick={toggleSkills}>Close</Button>
+        </div>
+      </Backdrop>
+
       <div className='class-name'>{summonerClassName}</div>
       <div className='summoner-information-wrapper'>
         <div className='img-container'>

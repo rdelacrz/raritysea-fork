@@ -29,7 +29,7 @@
     "paths": {
       "@assets/*": ["assets/*"],
       "@components": ["components"],
-      "@contract": ["contract"],
+      "@contracts": ["contracts"],
       "@environment": ["environment"],
       "@layouts": ["layouts"],
       "@models": ["models"],

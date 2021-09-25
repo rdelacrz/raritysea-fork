@@ -13,7 +13,7 @@ export const Header: FunctionComponent<HeaderProps> = (props) => {
   return (
     <AppBar className={classNames('header-wrapper', props.className)} color='primary'>
       <Toolbar className='toolbar-wrapper'>
-        <Typography className='app-name' variant='h4' component='h1'>DEGEN</Typography>
+        <Typography className='app-name' variant='h4' component='h1'>Scarcity</Typography>
         <ConnectWallet />
       </Toolbar>
     </AppBar>

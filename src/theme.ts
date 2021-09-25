@@ -36,6 +36,12 @@ const theme = createTheme({
       },
     },
 
+    MuiBackdrop: {
+      root: {
+        zIndex: 5000,
+      },
+    },
+
     // Inputs
     MuiOutlinedInput: {
       root: {
