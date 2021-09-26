@@ -2,7 +2,7 @@ import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { Button, Grid } from '@material-ui/core';
 import { Refresh } from '@material-ui/icons';
-import { DropdownField, LoadingProgress, Pagination, SummonerCard } from '@components';
+import { DropdownField, SummonerDisplay } from '@components';
 import { Page } from '@layouts';
 import { Summoner, SummonerData } from '@models';
 import {
@@ -21,7 +21,6 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
   const [summoners, setSummoners] = useState<SummonerData[]>([]);
   const [summonerClass, setSummonerClass] = useState<SummonerClass>(SummonerClass.ALL);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.PRICE_HIGH_TO_LOW);
-  const [pageIndex, setPageIndex] = useState<number>(0);
 
   /* Hook variables */
   const queryClient = useQueryClient();
@@ -39,7 +38,6 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
   const handleSummonerClassChange = (value: any) => {
     const classId = parseInt(value, 10) as SummonerClass;
     setSummonerClass(classId);
-    setPageIndex(0);    // Filtering change will affect page count, so reset page index to avoid errors
   }
 
   const handleSortByChange = (value: any) => {
@@ -78,21 +76,8 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
     }
 
     // Applies summoner class filter
-    return sortedSummoners.filter(s => s.class === summonerClass.toString());
+    return sortedSummoners.filter(s => s.class?.toNumber() === summonerClass);
   }, [sortedSummoners, summonerClass]);
-
-  // Determines pagination values based on page index and size
-  const startIndex = pageIndex * PAGE_SIZE;
-  const pageCount = Math.ceil(filteredSummoners.length / PAGE_SIZE);
-
-  // Applies pagination
-  const paginatedSummoners = useMemo(() => {
-    if (startIndex >= filteredSummoners.length) {
-      return filteredSummoners;
-    }
-
-    return filteredSummoners.slice(startIndex, startIndex + PAGE_SIZE);
-  }, [filteredSummoners, startIndex]);
 
   // Shows loading progress if data is being loaded for first time or refreshed via refresh button
   const dataLoading = isLoading || !isFetched;
@@ -130,24 +115,9 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
         </Grid>
       </div>
 
-      {dataLoading ? (
-        <LoadingProgress />
-      ) : (
-        <div className='summoner-display-wrapper'>
-          <Grid className='summoners-grid-wrapper' container spacing={3}>
-              {paginatedSummoners.map((summonerData, index) => {
-                const summonerClassIndex = summonerData.class ? parseInt(summonerData.class, 10) - 1 : undefined;
-                const classSkillSet = classSkills && summonerClassIndex !== undefined ? classSkills[summonerClassIndex] : [];
-                return (
-                  <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                    <SummonerCard summonerData={summonerData} classSkillSet={classSkillSet} onPurchase={handlePurchase} />
-                  </Grid>
-                );
-              })}
-            </Grid>
-            <Pagination currentIndex={pageIndex} pageCount={pageCount} onPageChange={setPageIndex} />
-        </div>
-      )}
+      <SummonerDisplay summonerDataList={filteredSummoners} classSkills={classSkills || []} dataLoading={dataLoading}
+        onPurchase={handlePurchase}
+      />
     </Page>
   );
 }

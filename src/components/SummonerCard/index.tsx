@@ -15,7 +15,7 @@ interface SummonerCardProps {
   onPurchase?: (summoner: Summoner) => void;
 }
 
-const formatBigNumberValue = (bigNumber?: string, decimalInsertionFromRight = 18) => {
+const formatBigNumberValue = (bigNumber?: BigNumber, decimalInsertionFromRight = 18) => {
   if (bigNumber !== undefined) {
     let numStr = bigNumber.toString();
     const insertDecimalIndex = numStr.length >= decimalInsertionFromRight ? numStr.length - decimalInsertionFromRight : numStr.length;
@@ -53,7 +53,7 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
 
   /* Regular variables */
 
-  const classId = parseInt(props.summonerData.class || '0', 10);
+  const classId = parseInt(props.summonerData.class?.toString() || '0', 10);
   const summonerClassSrc = props.summonerData.class ? ClassImageMap[classId] : null;
   const summonerClassName = props.summonerData.class ? ClassMap[classId] : '';
 

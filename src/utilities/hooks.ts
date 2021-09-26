@@ -13,6 +13,7 @@ import { useWeb3React } from '@web3-react/core';
 import { AbilityScore, ClassSkillSet, Summoner, SummonerData } from '@models';
 import { Call } from 'ethcall';
 import { Status, SummonerClass, SummonerClassList } from '@utilities';
+import { BigNumber } from '@ethersproject/bignumber';
 
 export const useSummonerDataList = () => (
   useQuery('getSummonerDataList', async () => {
@@ -27,16 +28,16 @@ export const useSummonerDataList = () => (
     ) as AbilityScore[];
     const summonerClasses = await provider.all(
       summoners.map(s => rarityContract.class(s.tokenID.toString()) as Call)
-    ) as string[];
+    ) as BigNumber[];
     const summonerLevels = await provider.all(
       summoners.map(s => rarityContract.level(s.tokenID.toString()) as Call)
-    ) as string[];
+    ) as BigNumber[];
     const xpList = await provider.all(
       summoners.map(s => rarityContract.xp(s.tokenID.toString()) as Call)
-    ) as string[];
+    ) as BigNumber[];
     const summonerGold = await provider.all(
       summoners.map(s => goldContract.balanceOf(s.tokenID.toString()) as Call)
-    ) as string[];
+    ) as BigNumber[];
 
     // Normal ethcall contracts seem to error out when getting skills for some reason...
     const input = summoners.map(s => skillsContractAlt.methods.get_skills(s.tokenID.toString()).call() as Promise<number[]>);
