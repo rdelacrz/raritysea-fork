@@ -11,6 +11,13 @@ const theme = createTheme({
     },
   },
   overrides: {
+    // Header elements
+    MuiAppBar: {
+      colorPrimary: {
+        backgroundColor: '#6E7D85',
+      },
+    },
+
     // Clickable elements
     MuiButton: {
       root: {
@@ -33,6 +40,19 @@ const theme = createTheme({
     MuiCard: {
       root: {
         backgroundColor: '#EEEEEE',
+      },
+    },
+
+    // Tabs
+    MuiTabs: {
+      root: {
+        backgroundColor: '#6e7d85',
+      },
+    },
+    MuiTab: {
+      root: {
+        color: 'white',
+        textTransform: 'capitalize',
       },
     },
 

@@ -1,0 +1,33 @@
+.marketplace-item-card-wrapper {
+    position: relative;
+    background-color: #EEEEEE;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 16px);
+    padding: 10px;
+    .item-name {
+        font-weight: 700;
+        text-align: center;
+    }
+    .marketplace-item-information-wrapper {
+        flex: 1;
+        .img-container {
+            display: flex;
+            justify-content: center;
+            img {
+                height: 200px;
+            }
+        }
+        .item-id, .attribute-container, .price-row {
+            font-weight: 500;
+            padding: 5px 0;
+            overflow-wrap: break-word;
+            text-align: center;
+        }
+        .price-row {
+            font-weight: 700;
+            padding: 10px 0;
+        }
+    }
+}

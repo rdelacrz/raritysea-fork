@@ -2,18 +2,20 @@
  * Hooks to access various data.
  */
 
-import {
-  useBuySummoner as useBuy, graphQLSchema,
-  summonersContract, attributesContract, rarityContract, goldContract, skillsContract, skillsContractAlt, provider
-} from '@contracts';
+import { Call } from 'ethcall';
+import { BigNumber } from '@ethersproject/bignumber';
 import { Web3Provider } from '@ethersproject/providers';
-import { graphql } from 'graphql';
 import { useQuery } from 'react-query';
 import { useWeb3React } from '@web3-react/core';
-import { AbilityScore, ClassSkillSet, Summoner, SummonerData } from '@models';
-import { Call } from 'ethcall';
-import { Status, SummonerClass, SummonerClassList } from '@utilities';
-import { BigNumber } from '@ethersproject/bignumber';
+import {
+  useBuySummoner as useBuy,
+  summonersContract, attributesContract, craftingContract, craftingMarketContract, rarityContract, goldContract,
+  skillsContract, skillsContractAlt, provider, goodsContract, armorContract, weaponsContract
+} from '@contracts';
+import {
+  AbilityScore, Armor, ClassSkillSet, CraftedItem, CraftedItemDataSets, Good, ListAt, Summoner, SummonerData, Weapon
+} from '@models';
+import { BaseItemType, Status, SummonerClassList } from '@utilities';
 
 export const useSummonerDataList = () => (
   useQuery('getSummonerDataList', async () => {
@@ -45,7 +47,7 @@ export const useSummonerDataList = () => (
 
     return summoners.map((summoner, index) => {
       const summonerData: SummonerData = {
-        summoner: ({...summoner}),
+        summoner: ({ ...summoner }),
         abilityScore: abilityScores[index],
         class: summonerClasses[index],
         level: summonerLevels[index],
@@ -56,7 +58,7 @@ export const useSummonerDataList = () => (
       return summonerData;
     });
   })
-)
+);
 
 export const useClassSkills = () => (
   useQuery('getClassSkills', async () => {
@@ -75,7 +77,7 @@ export const useClassSkills = () => (
       const skillNames = skillNamesPerSummoner[index];
       let skillNameIndex = 0;
 
-      const classSkillSets = activeSkills.map((active, id) => {
+      return activeSkills.map((active, id) => {
         const classSkillSet: ClassSkillSet = { id, active };
         if (active && skillNameIndex < skillNames.length) {
           classSkillSet.skillName = skillNames[skillNameIndex];
@@ -83,13 +85,56 @@ export const useClassSkills = () => (
         }
         return classSkillSet;
       });
-
-      return classSkillSets;
     });
 
     return classSkills;
   })
-)
+);
+
+export const useCraftedItems = () => (
+  useQuery('getCraftedItems', async () => {
+    // Gets id information
+    const listLengthResult = await provider.all([craftingMarketContract.listLength() as Call]);
+    const listLength: BigNumber = listLengthResult.length > 0 ? listLengthResult[0] : BigNumber.from(0);
+    const listsAtResult = await provider.all([craftingMarketContract.listsAt(0, listLength) as Call]);
+    const listAt: ListAt = listsAtResult.length > 0 ? listsAtResult[0] : { rIds: [], rPrices: [] };
+
+    // Crafted items
+    const craftedItems = await provider.all(listAt.rIds.map(rId => craftingContract.items(rId) as Call)) as CraftedItem[];
+    const craftedItemsAttributes = await provider.all(
+      craftedItems.map(item => {
+        switch (item.base_type) {
+          case BaseItemType.GOODS:
+            return goodsContract.item_by_id(item.item_type) as Call;
+          case BaseItemType.ARMOR:
+            return armorContract.item_by_id(item.item_type) as Call;
+          case BaseItemType.WEAPONS:
+          default:
+            return weaponsContract.item_by_id(item.item_type) as Call;
+        }
+      })
+    ) as (Armor | Good | Weapon)[];
+
+    return craftedItems.reduce((dataSet, item, index) => {
+      const craftedItem = { ...item };
+      const price = listAt.rPrices[index];
+      switch (craftedItem.base_type) {
+        case BaseItemType.GOODS:
+          dataSet.goods.push({ craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Good });
+          break;
+        case BaseItemType.ARMOR:
+          dataSet.armor.push({ craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Armor });
+          break;
+        case BaseItemType.WEAPONS:
+          dataSet.weapons.push({ craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Weapon });
+          break;
+        default:
+          break;
+      }
+      return dataSet;
+    }, { armor: [], goods: [], weapons: [] } as CraftedItemDataSets)
+  })
+);
 
 export const useBuySummoner = () => {
   const { library } = useWeb3React<Web3Provider>();

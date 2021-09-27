@@ -11,30 +11,6 @@
         right: 0;
         top: 0;
     }
-    .class-name {
-        font-weight: 700;
-        text-align: center;
-    }
-    .summoner-information-wrapper {
-        flex: 1;
-        .img-container {
-            display: flex;
-            justify-content: center;
-            img {
-                height: 200px;
-            }
-        }
-        .token-id, .attribute-container, .price-row {
-            font-weight: 500;
-            padding: 5px 0;
-            overflow-wrap: break-word;
-            text-align: center;
-        }
-        .price-row {
-            font-weight: 700;
-            padding: 10px 0;
-        }
-    }
     .purchase-button {
         background-color: #4CAF50;
         color: white;

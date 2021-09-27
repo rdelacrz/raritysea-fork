@@ -76,6 +76,13 @@ export const SummonerClassList = [
   SummonerClass.WIZARD
 ];
 
+export enum BaseItemType {
+  SUMMONERS = 0,  // Not originally a base item type associated with crafting, but can be used in marketplace page
+  GOODS = 1,
+  ARMOR = 2,
+  WEAPONS = 3
+}
+
 /**
  * Maps ids to their corresponding class names.
  */

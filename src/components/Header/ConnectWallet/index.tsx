@@ -42,9 +42,7 @@ export const ConnectWallet: FunctionComponent<ConnectWalletProps> = (props) => {
   return (
     <div className={classNames('connect-wallet-wrapper', props.className)}>
       {account ? (
-        <Button id='walletAddressBtn' variant='contained'>
-          {truncateAddress(account)}
-        </Button>
+        <div id='walletAddress'>{truncateAddress(account)}</div>
       ) : (
         <Button id='connectWalletBtn'
           onClick={handleConnectionClick}
