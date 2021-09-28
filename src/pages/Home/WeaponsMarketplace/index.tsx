@@ -1,10 +1,9 @@
-import { FunctionComponent, useEffect, useMemo, useState } from 'react';
+import { FunctionComponent, useMemo } from 'react';
 import classNames from 'classnames';
-import { useQueryClient } from 'react-query';
-import { Grid } from '@material-ui/core';
-import { DropdownField, WeaponDisplay } from '@components';
+import { WeaponDisplay } from '@components';
+import { Marketplace } from '@layouts';
 import { CraftedItemData, Weapon } from '@models';
-import { useCraftedItems } from '@utilities';
+import { getWeaponComparer, useCraftedItems, useWeaponTypes, WeaponSortBy, WeaponsSortByDropdownList } from '@utilities';
 
 import './styles.scss';
 
@@ -13,43 +12,43 @@ interface ComponentProps {
 }
 
 export const WeaponsMarketplace: FunctionComponent<ComponentProps> = (props) => {
-  /* State variables */
-  const [weapons, setWeapons] = useState<CraftedItemData<Weapon>[]>([]);
-
   /* Hook variables */
-  const { data: craftedItemDataSets, isLoading, isFetched } = useCraftedItems();
+  const { data: craftedItemDataSets, isLoading: isCraftedItemsLoading, isFetched: isCraftedItemsFetched } = useCraftedItems();
+  const { data: weaponTypes, isLoading: isWeaponTypesLoading } = useWeaponTypes();
 
   /* Functions */
+  const handlePurchase = (weapon: CraftedItemData<Weapon>) => {
+    
+  }
 
-
-  // Queries summoner data and sets it locally with given ordering
-  useEffect(() => {
-    if (craftedItemDataSets && (craftedItemDataSets.weapons || []).length > 0 && isFetched) {
-      setWeapons(craftedItemDataSets.weapons.slice());
-    }
-  }, [craftedItemDataSets]);
-
-  /* Calculated variables */
+   // Constructs initial weapons list using query results
+   const weapons = useMemo(() => (
+    (craftedItemDataSets?.weapons || []).slice()
+  ), [craftedItemDataSets]);
 
   // Shows loading progress if data is being loaded for first time or refreshed via refresh button
-  const dataLoading = isLoading || !isFetched;
+  const dataLoading = isCraftedItemsLoading || isWeaponTypesLoading || !isCraftedItemsFetched;
+
+  // Sets up dropdown options
+  const weaponTypeOptions = [{text: 'All Weapons', value: 0}].concat(weaponTypes || []);
+  const sortByOptions = WeaponsSortByDropdownList.map((text, value) => ({ text, value }));
 
   return (
-    <div className={classNames('summoners-marketplace-wrapper', props.className)}>
-      <div className='dropdown-row-wrapper'>
-        <Grid className='dropdown-grid-wrapper' container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            
-          </Grid>
-        </Grid>
-      </div>
-
-      <WeaponDisplay dataLoading={dataLoading} weaponList={weapons} />
-
-      
-    </div>
+    <Marketplace
+      className={classNames('weapons-marketplace-wrapper', props.className)}
+      marketplaceItems={weapons}
+      dataLoading={dataLoading}
+      filterDropdown={{ id: 'weaponTypeDropdown', label: 'Select Weapon Type', options: weaponTypeOptions }}
+      sortByDropdown={{ id: 'sortByDropdown', label: 'Select Sort', options: sortByOptions }}
+      noFilterValue={0}
+      initialSortByValue={WeaponSortBy.PRICE_HIGH_TO_LOW}
+      getItemComparer={getWeaponComparer}
+      filterFunc={filterValue => (weaponData => weaponData.craftedItem.item_type === filterValue)}
+      onPurchase={handlePurchase}
+    >
+      {filteredWeapons => (
+        <WeaponDisplay dataLoading={dataLoading} weaponList={filteredWeapons} onPurchase={handlePurchase} />
+      )}
+    </Marketplace>
   );
 }

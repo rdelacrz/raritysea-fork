@@ -14,7 +14,7 @@ export enum Status {
 /**
  * Contains possible sorting options for summoners.
  */
-export enum SortBy {
+export enum SummonerSortBy {
   PRICE_LOW_TO_HIGH,
   PRICE_HIGH_TO_LOW,
   CHAR_ID_LOW_TO_HIGH,
@@ -30,7 +30,7 @@ export enum SortBy {
   INVENTORY_GOLD,
 }
 
-export const SortByDropdownList = [
+export const SummonerSortByDropdownList = [
   'Price : Low to High',
   'Price : High to Low',
   'Character ID : Low to High',
@@ -47,18 +47,18 @@ export const SortByDropdownList = [
 ];
 
 export enum SummonerClass {
-  ALL = 0,
-  BARBARIAN = 1,
-  BARD = 2,
-  CLERIC = 3,
-  DRUID = 4,
-  FIGHTER = 5,
-  MONK = 6,
-  PALADIN = 7,
-  RANGER = 8,
-  ROGUE = 9,
-  SORCERER = 10,
-  WIZARD = 11,
+  ALL,
+  BARBARIAN,
+  BARD,
+  CLERIC,
+  DRUID,
+  FIGHTER,
+  MONK,
+  PALADIN,
+  RANGER,
+  ROGUE,
+  SORCERER,
+  WIZARD,
 }
 
 export const SummonerClassList = [
@@ -82,6 +82,24 @@ export enum BaseItemType {
   ARMOR = 2,
   WEAPONS = 3
 }
+
+export const WeaponsTypeCount = 59;
+
+export enum WeaponSortBy {
+  PRICE_LOW_TO_HIGH,
+  PRICE_HIGH_TO_LOW,
+  WEAPON_ID_LOW_TO_HIGH,
+  WEAPON_ID_HIGH_TO_LOW,
+  ATTR_DAMAGE,
+}
+
+export const WeaponsSortByDropdownList = [
+  'Price : Low to High',
+  'Price : High to Low',
+  'Weapon ID : Low to High',
+  'Weapon ID : High to Low',
+  'Attribute : DAMAGE',
+];
 
 /**
  * Maps ids to their corresponding class names.

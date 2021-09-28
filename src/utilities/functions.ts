@@ -3,9 +3,9 @@
  */
 
 import { BigNumber } from '@ethersproject/bignumber';
-import { SummonerData } from '@models';
+import { CraftedItemData, SummonerData, Weapon } from '@models';
 import Web3 from 'web3';
-import { SortBy } from './constants';
+import { SummonerSortBy, WeaponSortBy } from './constants';
 
 export const generateFtmContractLink = (address: string) => {
   return `https://ftmscan.com/address/${address}`;
@@ -44,34 +44,51 @@ export const compareBigNumbers = (bigNumber1?: BigNumber, bigNumber2?: BigNumber
  *
  * @returns Compare function that accepts two items and returns integer based on sorting results.
  */
-export const getSummonerComparer = (sortBy: SortBy) => {
+export const getSummonerComparer = (sortBy: SummonerSortBy) => {
   switch (sortBy) {
-    case SortBy.PRICE_LOW_TO_HIGH:
+    case SummonerSortBy.PRICE_LOW_TO_HIGH:
       return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d1.price, d2.price);
-    case SortBy.PRICE_HIGH_TO_LOW:
+    case SummonerSortBy.PRICE_HIGH_TO_LOW:
       return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.price, d1.price);
-    case SortBy.CHAR_ID_LOW_TO_HIGH:
+    case SummonerSortBy.CHAR_ID_LOW_TO_HIGH:
       return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d1.id, d2.id);
-    case SortBy.CHAR_ID_HIGH_TO_LOW:
+    case SummonerSortBy.CHAR_ID_HIGH_TO_LOW:
       return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.id, d1.id);
-    case SortBy.ATTR_LV:
+    case SummonerSortBy.ATTR_LV:
       return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.level, d1.level);
-    case SortBy.ATTR_EXP:
+    case SummonerSortBy.ATTR_EXP:
       return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.xp, d1.xp);
-    case SortBy.ATTR_STR:
+    case SummonerSortBy.ATTR_STR:
       return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.strength || 0) - (d1.abilityScore?.strength || 0);
-    case SortBy.ATTR_CON:
+    case SummonerSortBy.ATTR_CON:
       return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.constitution || 0) - (d1.abilityScore?.constitution || 0);
-    case SortBy.ATTR_DEX:
+    case SummonerSortBy.ATTR_DEX:
       return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.dexterity || 0) - (d1.abilityScore?.dexterity || 0);
-    case SortBy.ATTR_INT:
+    case SummonerSortBy.ATTR_INT:
       return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.intelligence || 0) - (d1.abilityScore?.intelligence || 0);
-    case SortBy.ATTR_WIS:
+    case SummonerSortBy.ATTR_WIS:
       return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.wisdom || 0) - (d1.abilityScore?.wisdom || 0);
-    case SortBy.ATTR_CHA:
+    case SummonerSortBy.ATTR_CHA:
       return (d1: SummonerData, d2: SummonerData) => (d2.abilityScore?.charisma || 0) - (d1.abilityScore?.charisma || 0);
-    case SortBy.INVENTORY_GOLD:
+    case SummonerSortBy.INVENTORY_GOLD:
       return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.gold, d1.gold);
+    default:
+      return undefined;
+  }
+}
+
+export const getWeaponComparer = (sortBy: WeaponSortBy) => {
+  switch (sortBy) {
+    case WeaponSortBy.PRICE_LOW_TO_HIGH:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w1.price, w2.price);
+    case WeaponSortBy.PRICE_HIGH_TO_LOW:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.price, w1.price);
+    case WeaponSortBy.WEAPON_ID_LOW_TO_HIGH:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w1.itemAttributes.id, w2.itemAttributes.id);
+    case WeaponSortBy.WEAPON_ID_HIGH_TO_LOW:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.id, w1.itemAttributes.id);
+    case WeaponSortBy.ATTR_DAMAGE:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.damage, w1.itemAttributes.damage);
     default:
       return undefined;
   }
