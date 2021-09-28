@@ -6,7 +6,7 @@
 import { BigNumber } from '@ethersproject/bignumber';
 import { useMutation, useQueries, useQueryClient } from 'react-query';
 import { Signer } from 'ethers';
-import { skillsContract, summonersContract, summonersContractFetcherWithSigner } from 'contracts';
+import { summonersContractFetcherWithSigner } from 'contracts';
 import { SummonerClass, SummonerClassList } from '@utilities';
 
 export const useBuySummoner = (signer?: Signer) => {

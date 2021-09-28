@@ -6,7 +6,7 @@ import goldAbi from './abi/gold-abi.json';
 import goodsAbi from './abi/goods-abi.json';
 import rarityAbi from './abi/rarity-abi.json';
 import skillsAbi from './abi/skills-abi.json';
-import summonersAbi from './abi/summoners-abi.json';
+import summonersMarketAbi from './abi/summoners-market-abi.json';
 import weaponsAbi from './abi/weapons-abi.json';
 
 // Contract only runs properly on the Fantom Opera network
@@ -14,8 +14,8 @@ export const compatibleChainId = 250;
 export const compatibleRPCUrl = 'https://rpc.ftm.tools';
 
 // Summoners contract information
-export const summonersContractAddress = '0x0F9B8dD449A958563213Be539Ce13BF6a3751Bd3';
-export const summonersContractAbi = summonersAbi;
+export const summonersMarketContractAddress = '0x0F9B8dD449A958563213Be539Ce13BF6a3751Bd3';
+export const summonersMarketContractAbi = summonersMarketAbi;
 
 // Attributes contract information
 export const attributesContractAddress = '0xB5F5AF1087A8DA62A23b08C00C6ec9af21F397a1';

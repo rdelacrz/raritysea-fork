@@ -5,4 +5,5 @@ export interface CraftedItemData<T extends Armor | Good | Weapon> {
   craftedItem: CraftedItem;
   itemAttributes: T;
   price: BigNumber;
+  lister: string;
 }

@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import classNames from 'classnames';
 import { Link } from '@material-ui/core';
-import { summonersContractAddress } from '@contracts';
+import { summonersMarketContractAddress } from '@contracts';
 import { generateFtmContractLink, truncateAddress } from '@utilities';
 
 import './styles.scss';
@@ -11,8 +11,8 @@ interface FooterProps {
 }
 
 export const Footer: FunctionComponent<FooterProps> = (props) => {
-  const contractLink = generateFtmContractLink(summonersContractAddress);
-  const truncatedContract = truncateAddress(summonersContractAddress, 6);
+  const contractLink = generateFtmContractLink(summonersMarketContractAddress);
+  const truncatedContract = truncateAddress(summonersMarketContractAddress, 6);
   return (
     <div className={classNames('footer-wrapper', props.className)}>
       <span className='footer-text'>Market Contract Address: </span>

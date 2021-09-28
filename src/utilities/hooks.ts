@@ -9,13 +9,13 @@ import { useQuery, useInfiniteQuery } from 'react-query';
 import { useWeb3React } from '@web3-react/core';
 import {
   useBuySummoner as useBuy,
-  summonersContract, attributesContract, craftingContract, craftingMarketContract, rarityContract, goldContract,
+  summonersMarketContract, attributesContract, craftingContract, craftingMarketContract, rarityContract, goldContract,
   skillsContract, skillsContractAlt, provider, goodsContract, armorContract, weaponsContract
 } from '@contracts';
 import {
-  AbilityScore, Armor, ClassSkillSet, CraftedItem, CraftedItemDataSets, Good, ListAt, QueryResult, Summoner, SummonerData, Weapon
+  AbilityScore, Armor, ClassSkillSet, CraftedItem, CraftedItemDataSets, Good, ListAt, QueryResult, SummonerData, Weapon
 } from '@models';
-import { BaseItemType, Status, SummonerClassList } from '@utilities';
+import { BaseItemType, SummonerClassList } from '@utilities';
 
 const MAX_QUERY_SIZE = 50;
 
@@ -24,16 +24,19 @@ export const useSummonerDataList = () => (
     const currIndex = parseInt(pageParam || 0, 10);
 
     // Gets number of current summoners
-    const listLengthResult = await provider.all([summonersContract.listLength() as Call]);
+    const listLengthResult = await provider.all([summonersMarketContract.listLength() as Call]);
     const listLength: BigNumber = listLengthResult.length > 0 ? listLengthResult[0] : BigNumber.from(0);
     const listLengthNum = listLength.toNumber();
 
     // Gets all summoner data
     const count = currIndex + MAX_QUERY_SIZE < listLengthNum ? MAX_QUERY_SIZE : listLengthNum - currIndex;
-    const listsAtResults = await provider.all([summonersContract.listsAt(currIndex, count) as Call]);
+    const listsAtResults = await provider.all([summonersMarketContract.listsAt(currIndex, count) as Call]);
     const listAt: ListAt = listsAtResults.length > 0 ? listsAtResults[0] : { rIds: [], rPrices: [] };
 
     // Performs calls en masse for each summoner
+    const listers = await provider.all(
+      listAt.rIds.map(id => summonersMarketContract.listers(id.toString()) as Call)
+    ) as string[];
     const abilityScores = await provider.all(
       listAt.rIds.map(id => attributesContract.ability_scores(id.toString()) as Call)
     ) as AbilityScore[];
@@ -58,6 +61,7 @@ export const useSummonerDataList = () => (
       const summonerData: SummonerData = {
         id,
         price: listAt.rPrices[index],
+        lister: listers[index],
         abilityScore: abilityScores[index],
         class: summonerClasses[index],
         level: summonerLevels[index],
@@ -78,7 +82,6 @@ export const useSummonerDataList = () => (
   }, {
     getNextPageParam: (prevPage, pages) => prevPage.currIndex < prevPage.totalResults ?
       prevPage.currIndex + MAX_QUERY_SIZE : undefined
-    
   })
 );
 
@@ -137,18 +140,29 @@ export const useCraftedItems = () => (
       })
     ) as (Armor | Good | Weapon)[];
 
+    // Gets listers
+    const listers = await provider.all(
+      listAt.rIds.map(id => craftingMarketContract.listers(id.toString()) as Call)
+    ) as string[];
+
     return craftedItems.reduce((dataSet, item, index) => {
       const craftedItem = { ...item };
       const price = listAt.rPrices[index];
       switch (craftedItem.base_type) {
         case BaseItemType.GOODS:
-          dataSet.goods.push({ craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Good });
+          dataSet.goods.push({
+            craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Good, lister: listers[index]
+          });
           break;
         case BaseItemType.ARMOR:
-          dataSet.armor.push({ craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Armor });
+          dataSet.armor.push({
+            craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Armor, lister: listers[index]
+          });
           break;
         case BaseItemType.WEAPONS:
-          dataSet.weapons.push({ craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Weapon });
+          dataSet.weapons.push({
+            craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Weapon, lister: listers[index]
+          });
           break;
         default:
           break;

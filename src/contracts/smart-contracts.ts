@@ -7,7 +7,7 @@ import {
   craftingMarketContractAddress, craftingMarketContractAbi,
   goldContractAddress, goldContractAbi, goodsContractAddress, goodsContractAbi,
   rarityContractAddress, rarityContractAbi, skillsContractAddress, skillsContractAbi,
-  summonersContractAbi, summonersContractAddress, weaponsContractAddress, weaponsContractAbi
+  summonersMarketContractAbi, summonersMarketContractAddress, weaponsContractAddress, weaponsContractAbi
 } from './constants';
 
 // Provider for executing contract calls
@@ -16,7 +16,7 @@ compatibleProvider.init(new providers.JsonRpcProvider(compatibleRPCUrl));
 
 export const provider = compatibleProvider;
 
-export const summonersContract = new Contract(summonersContractAddress, summonersContractAbi);
+export const summonersMarketContract = new Contract(summonersMarketContractAddress, summonersMarketContractAbi);
 
 export const attributesContract = new Contract(attributesContractAddress, attributesContractAbi);
 
@@ -41,6 +41,6 @@ const web3 = new Web3(new Web3.providers.HttpProvider(compatibleRPCUrl));
 export const skillsContractAlt = new web3.eth.Contract(skillsContractAbi as any, skillsContractAddress);
 
 export const summonersContractFetcherWithSigner = <T>(method: string, ...args: any[]): Promise<T> => {
-  const contract = new Contract(summonersContractAddress, summonersContractAbi);
+  const contract = new Contract(summonersMarketContractAddress, summonersMarketContractAbi);
   return contract[method](...args);
 }

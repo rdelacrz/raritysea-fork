@@ -29,8 +29,6 @@ export const WeaponsMarketplace: FunctionComponent<ComponentProps> = (props) => 
     }
   }, [craftedItemDataSets]);
 
-  console.log('weapons', weapons)
-
   /* Calculated variables */
 
   // Shows loading progress if data is being loaded for first time or refreshed via refresh button
@@ -49,7 +47,7 @@ export const WeaponsMarketplace: FunctionComponent<ComponentProps> = (props) => 
         </Grid>
       </div>
 
-      <WeaponDisplay weaponList={weapons} />
+      <WeaponDisplay dataLoading={dataLoading} weaponList={weapons} />
 
       
     </div>
