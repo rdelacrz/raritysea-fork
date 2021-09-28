@@ -14,7 +14,7 @@ export const compatibleChainId = 250;
 export const compatibleRPCUrl = 'https://rpc.ftm.tools';
 
 // Summoners contract information
-export const summonersContractAddress = '0xE966c792B384ff4e82D13cc0C1Bd1D9C5FE68Fe4';
+export const summonersContractAddress = '0x0F9B8dD449A958563213Be539Ce13BF6a3751Bd3';
 export const summonersContractAbi = summonersAbi;
 
 // Attributes contract information

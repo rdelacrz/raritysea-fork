@@ -1,9 +1,9 @@
 import { Fragment, FunctionComponent, useState } from 'react';
 import classNames from 'classnames';
 import { BigNumber } from '@ethersproject/bignumber';
-import { Backdrop, Button, Card, Grid, IconButton } from '@material-ui/core';
+import { Backdrop, Button, Grid, IconButton } from '@material-ui/core';
 import { BuildRounded, ShoppingCart } from '@material-ui/icons';
-import { MarketplaceItemCard } from '@components';
+import { MarketplaceItemCard } from '@layouts';
 import { ClassSkillSet, Summoner, SummonerData } from '@models';
 import { ClassMap, ClassImageMap } from '@utilities';
 
@@ -13,7 +13,7 @@ interface SummonerCardProps {
   className?: string;
   summonerData: SummonerData;
   classSkillSet: ClassSkillSet[];
-  onPurchase?: (summoner: Summoner) => void;
+  onPurchase?: (summoner: SummonerData) => void;
 }
 
 const formatBigNumberValue = (bigNumber?: BigNumber, decimalInsertionFromRight = 18) => {
@@ -36,6 +36,8 @@ const formatBigNumberValue = (bigNumber?: BigNumber, decimalInsertionFromRight =
   return undefined;
 }
 
+const BASE_STAT = 8;
+
 export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
   /* State variables */
   const [showSkills, setShowSkills] = useState(false);
@@ -44,7 +46,7 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
 
   const handlePurchase = () => {
     if (props.onPurchase) {
-      props.onPurchase(props.summonerData.summoner);
+      props.onPurchase(props.summonerData);
     }
   }
 
@@ -54,22 +56,23 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
   const summonerClassSrc = props.summonerData.class ? ClassImageMap[classId] : null;
   const summonerClassName = props.summonerData.class ? ClassMap[classId] : '';
 
-  const tokenId = props.summonerData.summoner.tokenID?.toString();
+  const tokenId = props.summonerData.id?.toString();
 
   const divisor = BigNumber.from('1000000000000000000');
 
-  const price = props.summonerData.summoner.price ? BigNumber.from(props.summonerData.summoner.price).div(divisor)?.toString() : null;
-  const gold = props.summonerData.gold ? BigNumber.from(props.summonerData.gold).div(divisor).toBigInt()?.toLocaleString() : null;
+  const price = props.summonerData.price ? BigNumber.from(props.summonerData.price).div(divisor)?.toString() : undefined;
+  const gold = props.summonerData.gold ? BigNumber.from(props.summonerData.gold).div(divisor).toBigInt()?.toLocaleString() : undefined;
 
+  // Base stat 8 is added to all attributes
   const valuePairs = [
     { name: 'LV', value: props.summonerData.level?.toString() },
     { name: 'EXP', value: formatBigNumberValue(props.summonerData.xp) },
-    { name: 'STR', value: props.summonerData.abilityScore?.strength },
-    { name: 'CON', value: props.summonerData.abilityScore?.constitution },
-    { name: 'DEX', value: props.summonerData.abilityScore?.dexterity },
-    { name: 'INT', value: props.summonerData.abilityScore?.intelligence },
-    { name: 'WIS', value: props.summonerData.abilityScore?.wisdom },
-    { name: 'CHA', value: props.summonerData.abilityScore?.charisma },
+    { name: 'STR', value: (props.summonerData.abilityScore?.strength || 0) + BASE_STAT },
+    { name: 'CON', value: (props.summonerData.abilityScore?.constitution || 0) + BASE_STAT },
+    { name: 'DEX', value: (props.summonerData.abilityScore?.dexterity || 0) + BASE_STAT },
+    { name: 'INT', value: (props.summonerData.abilityScore?.intelligence || 0) + BASE_STAT },
+    { name: 'WIS', value: (props.summonerData.abilityScore?.wisdom || 0) + BASE_STAT },
+    { name: 'CHA', value: (props.summonerData.abilityScore?.charisma || 0) + BASE_STAT },
     { name: 'Gold', value: gold },
   ];
 
@@ -78,7 +81,8 @@ export const SummonerCard: FunctionComponent<SummonerCardProps> = (props) => {
       itemName={summonerClassName}
       imageSrc={summonerClassSrc}
       itemId={tokenId}
-      priceText={`${price} FTM`}
+      priceText={price}
+      currencyType='FTM'
       valuePairs={valuePairs}
       topElement={(
         <Fragment>

@@ -47,13 +47,13 @@ export const compareBigNumbers = (bigNumber1?: BigNumber, bigNumber2?: BigNumber
 export const getSummonerComparer = (sortBy: SortBy) => {
   switch (sortBy) {
     case SortBy.PRICE_LOW_TO_HIGH:
-      return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d1.summoner.price, d2.summoner.price);
+      return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d1.price, d2.price);
     case SortBy.PRICE_HIGH_TO_LOW:
-      return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.summoner.price, d1.summoner.price);
+      return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.price, d1.price);
     case SortBy.CHAR_ID_LOW_TO_HIGH:
-      return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d1.summoner.tokenID, d2.summoner.tokenID);
+      return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d1.id, d2.id);
     case SortBy.CHAR_ID_HIGH_TO_LOW:
-      return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.summoner.tokenID, d1.summoner.tokenID);
+      return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.id, d1.id);
     case SortBy.ATTR_LV:
       return (d1: SummonerData, d2: SummonerData) => compareBigNumbers(d2.level, d1.level);
     case SortBy.ATTR_EXP:

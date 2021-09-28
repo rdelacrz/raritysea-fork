@@ -2,7 +2,7 @@ import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import { useQueryClient } from 'react-query';
 import { Grid } from '@material-ui/core';
-import { DropdownField, SummonerDisplay } from '@components';
+import { DropdownField, WeaponDisplay } from '@components';
 import { CraftedItemData, Weapon } from '@models';
 import { useCraftedItems } from '@utilities';
 
@@ -33,6 +33,9 @@ export const WeaponsMarketplace: FunctionComponent<ComponentProps> = (props) => 
 
   /* Calculated variables */
 
+  // Shows loading progress if data is being loaded for first time or refreshed via refresh button
+  const dataLoading = isLoading || !isFetched;
+
   return (
     <div className={classNames('summoners-marketplace-wrapper', props.className)}>
       <div className='dropdown-row-wrapper'>
@@ -45,6 +48,8 @@ export const WeaponsMarketplace: FunctionComponent<ComponentProps> = (props) => 
           </Grid>
         </Grid>
       </div>
+
+      <WeaponDisplay weaponList={weapons} />
 
       
     </div>

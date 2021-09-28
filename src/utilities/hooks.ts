@@ -5,7 +5,7 @@
 import { Call } from 'ethcall';
 import { BigNumber } from '@ethersproject/bignumber';
 import { Web3Provider } from '@ethersproject/providers';
-import { useQuery } from 'react-query';
+import { useQuery, useInfiniteQuery } from 'react-query';
 import { useWeb3React } from '@web3-react/core';
 import {
   useBuySummoner as useBuy,
@@ -13,41 +13,51 @@ import {
   skillsContract, skillsContractAlt, provider, goodsContract, armorContract, weaponsContract
 } from '@contracts';
 import {
-  AbilityScore, Armor, ClassSkillSet, CraftedItem, CraftedItemDataSets, Good, ListAt, Summoner, SummonerData, Weapon
+  AbilityScore, Armor, ClassSkillSet, CraftedItem, CraftedItemDataSets, Good, ListAt, QueryResult, Summoner, SummonerData, Weapon
 } from '@models';
 import { BaseItemType, Status, SummonerClassList } from '@utilities';
 
+const MAX_QUERY_SIZE = 50;
+
 export const useSummonerDataList = () => (
-  useQuery('getSummonerDataList', async () => {
-    // Gets summoner data
-    const getAllSummonersCall = summonersContract.getAllSummoners() as Call;
-    const callResult = await provider.all([getAllSummonersCall]);
-    const summoners = (callResult[0] as Summoner[]).filter(s => s.status === Status.LISTED);
+  useInfiniteQuery('getSummonerDataList', async ({ pageParam }) => {
+    const currIndex = parseInt(pageParam || 0, 10);
+
+    // Gets number of current summoners
+    const listLengthResult = await provider.all([summonersContract.listLength() as Call]);
+    const listLength: BigNumber = listLengthResult.length > 0 ? listLengthResult[0] : BigNumber.from(0);
+    const listLengthNum = listLength.toNumber();
+
+    // Gets all summoner data
+    const count = currIndex + MAX_QUERY_SIZE < listLengthNum ? MAX_QUERY_SIZE : listLengthNum - currIndex;
+    const listsAtResults = await provider.all([summonersContract.listsAt(currIndex, count) as Call]);
+    const listAt: ListAt = listsAtResults.length > 0 ? listsAtResults[0] : { rIds: [], rPrices: [] };
 
     // Performs calls en masse for each summoner
     const abilityScores = await provider.all(
-      summoners.map(s => attributesContract.ability_scores(s.tokenID.toString()) as Call)
+      listAt.rIds.map(id => attributesContract.ability_scores(id.toString()) as Call)
     ) as AbilityScore[];
     const summonerClasses = await provider.all(
-      summoners.map(s => rarityContract.class(s.tokenID.toString()) as Call)
+      listAt.rIds.map(id => rarityContract.class(id.toString()) as Call)
     ) as BigNumber[];
     const summonerLevels = await provider.all(
-      summoners.map(s => rarityContract.level(s.tokenID.toString()) as Call)
+      listAt.rIds.map(id => rarityContract.level(id.toString()) as Call)
     ) as BigNumber[];
     const xpList = await provider.all(
-      summoners.map(s => rarityContract.xp(s.tokenID.toString()) as Call)
+      listAt.rIds.map(id => rarityContract.xp(id.toString()) as Call)
     ) as BigNumber[];
     const summonerGold = await provider.all(
-      summoners.map(s => goldContract.balanceOf(s.tokenID.toString()) as Call)
+      listAt.rIds.map(id => goldContract.balanceOf(id.toString()) as Call)
     ) as BigNumber[];
 
     // Normal ethcall contracts seem to error out when getting skills for some reason...
-    const input = summoners.map(s => skillsContractAlt.methods.get_skills(s.tokenID.toString()).call() as Promise<number[]>);
+    const input = listAt.rIds.map(id => skillsContractAlt.methods.get_skills(id.toString()).call() as Promise<number[]>);
     const summonerSkills = await Promise.all(input);
 
-    return summoners.map((summoner, index) => {
+    const summonerDataList = listAt.rIds.map((id, index) => {
       const summonerData: SummonerData = {
-        summoner: ({ ...summoner }),
+        id,
+        price: listAt.rPrices[index],
         abilityScore: abilityScores[index],
         class: summonerClasses[index],
         level: summonerLevels[index],
@@ -57,6 +67,18 @@ export const useSummonerDataList = () => (
       };
       return summonerData;
     });
+
+    const queryResult: QueryResult<SummonerData> = {
+      result: summonerDataList,
+      currIndex,
+      totalResults: listLengthNum,
+    };
+
+    return queryResult;
+  }, {
+    getNextPageParam: (prevPage, pages) => prevPage.currIndex < prevPage.totalResults ?
+      prevPage.currIndex + MAX_QUERY_SIZE : undefined
+    
   })
 );
 

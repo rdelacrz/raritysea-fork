@@ -1,9 +1,8 @@
 import { FunctionComponent, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
-import { useQueryClient } from 'react-query';
 import { Grid } from '@material-ui/core';
 import { DropdownField, SummonerDisplay } from '@components';
-import { Summoner, SummonerData } from '@models';
+import { SummonerData } from '@models';
 import {
   ClassMap, getSummonerComparer, SortBy, SortByDropdownList, SummonerClass, SummonerClassList,
   useBuySummoner, useClassSkills, useSummonerDataList
@@ -17,12 +16,11 @@ interface ComponentProps {
 
 export const SummonersMarketplace: FunctionComponent<ComponentProps> = (props) => {
   /* State variables */
-  const [summoners, setSummoners] = useState<SummonerData[]>([]);
   const [summonerClass, setSummonerClass] = useState<SummonerClass>(SummonerClass.ALL);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.PRICE_HIGH_TO_LOW);
 
   /* Hook variables */
-  const { data: summonerDataList, isLoading, isFetched } = useSummonerDataList();
+  const { data: queryResult, isLoading, isFetched, isFetchingNextPage, hasNextPage, fetchNextPage } = useSummonerDataList();
   const { data: classSkills } = useClassSkills();
   const buySummonerMutation = useBuySummoner();
 
@@ -38,21 +36,28 @@ export const SummonersMarketplace: FunctionComponent<ComponentProps> = (props) =
     setSortBy(sortByValue);
   }
 
-  const handlePurchase = (summoner: Summoner) => {
+  const handlePurchase = (summoner: SummonerData) => {
     buySummonerMutation.mutate({
       price: summoner.price,
-      listId: summoner.listId,
+      listId: summoner.id,
     });
   }
 
-  // Queries summoner data and sets it locally with given ordering
+  // Queries next page once current one is fetched
   useEffect(() => {
-    if ((summonerDataList as SummonerData[] || []).length > 0 && isFetched) {
-      setSummoners((summonerDataList as SummonerData[]).slice());
+    if (isFetched && !isFetchingNextPage && hasNextPage) {
+      fetchNextPage();
     }
-  }, [summonerDataList]);
+  }, [isFetched, isFetchingNextPage]);
 
   /* Calculated variables */
+
+  // Constructs initial summoners list using query results
+  const summoners = useMemo(() => (
+    (queryResult?.pages || []).reduce((list, result) => (
+      list.concat(result.result)
+    ), [] as SummonerData[])
+  ), [queryResult?.pages]);
 
   // Applies sort
   const sortedSummoners = useMemo(() => {

@@ -2,7 +2,8 @@ import { BigNumber } from '@ethersproject/bignumber';
 import { AbilityScore, Summoner } from '@models';
 
 export interface SummonerData {
-  summoner: Summoner;
+  id: BigNumber;
+  price: BigNumber;
   abilityScore?: AbilityScore;
   class?: BigNumber;
   level?: BigNumber;

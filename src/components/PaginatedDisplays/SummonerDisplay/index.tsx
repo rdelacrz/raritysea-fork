@@ -1,7 +1,7 @@
 import { Fragment, FunctionComponent, useMemo, useEffect, useState } from 'react';
 import { Grid } from '@material-ui/core';
 import { LoadingProgress, Pagination, SummonerCard } from '@components';
-import { ClassSkillSet, Summoner, SummonerData } from '@models';
+import { ClassSkillSet, SummonerData } from '@models';
 import { PAGE_SIZE } from '@utilities';
 
 import './styles.scss';
@@ -11,7 +11,7 @@ interface ComponentProps {
   dataLoading?: boolean;
   summonerDataList: SummonerData[];
   classSkills: ClassSkillSet[][];
-  onPurchase?: (summoner: Summoner) => void;
+  onPurchase?: (summoner: SummonerData) => void;
 }
 
 export const SummonerDisplay: FunctionComponent<ComponentProps> = (props) => {

@@ -1,4 +1,4 @@
-.summoner-card-wrapper {
+.weapon-card-wrapper {
     position: relative;
     background-color: #EEEEEE;
     color: black;
@@ -6,7 +6,7 @@
     flex-direction: column;
     height: calc(100% - 16px);
     padding: 10px;
-    .skill-button {
+    .description-button {
         position: absolute;
         right: 0;
         top: 0;
@@ -21,18 +21,14 @@
     }
 }
 
-.skills-backdrop {
+.description-backdrop {
     color: white;
     flex-direction: column;
-    .skills-header {
+    .description-header {
         text-align: center;
     }
-    .skills-display-wrapper {
-        max-width: 550px;
-        .skill-value {
-            font-weight: bold;
-            text-align: center;
-        }
+    .description-text {
+        max-width: 600px;
     }
     .close-button-row {
         padding-top: 20px;
