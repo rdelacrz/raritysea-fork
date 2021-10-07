@@ -147,21 +147,22 @@ export const useCraftedItems = () => (
 
     return craftedItems.reduce((dataSet, item, index) => {
       const craftedItem = { ...item };
+      const listId = listAt.rIds[index];
       const price = listAt.rPrices[index];
       switch (craftedItem.base_type) {
         case BaseItemType.GOODS:
           dataSet.goods.push({
-            craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Good, lister: listers[index]
+            craftedItem, listId, price, itemAttributes: { ...craftedItemsAttributes[index] } as Good, lister: listers[index]
           });
           break;
         case BaseItemType.ARMOR:
           dataSet.armor.push({
-            craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Armor, lister: listers[index]
+            craftedItem, listId, price, itemAttributes: { ...craftedItemsAttributes[index] } as Armor, lister: listers[index]
           });
           break;
         case BaseItemType.WEAPONS:
           dataSet.weapons.push({
-            craftedItem, price, itemAttributes: { ...craftedItemsAttributes[index] } as Weapon, lister: listers[index]
+            craftedItem, listId, price, itemAttributes: { ...craftedItemsAttributes[index] } as Weapon, lister: listers[index]
           });
           break;
         default:

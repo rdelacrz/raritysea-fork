@@ -89,6 +89,20 @@ export const getWeaponComparer = (sortBy: WeaponSortBy) => {
       return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.id, w1.itemAttributes.id);
     case WeaponSortBy.ATTR_DAMAGE:
       return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.damage, w1.itemAttributes.damage);
+    case WeaponSortBy.ATTR_CRITICAL:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.critical, w1.itemAttributes.critical);
+    case WeaponSortBy.ATTR_CRITICAL_MOD:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.critical_modifier, w1.itemAttributes.critical_modifier);
+    case WeaponSortBy.ATTR_RANGE_INC:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.range_increment, w1.itemAttributes.range_increment);
+    case WeaponSortBy.ATTR_PROFICIENCY:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.proficiency, w1.itemAttributes.proficiency);
+    case WeaponSortBy.ATTR_ENCUMBRENCE:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.encumbrance, w1.itemAttributes.encumbrance);
+    case WeaponSortBy.ATTR_DAMAGE_TYPE:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.damage_type, w1.itemAttributes.damage_type);
+    case WeaponSortBy.ATTR_WEIGHT:
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.weight, w1.itemAttributes.weight);
     default:
       return undefined;
   }

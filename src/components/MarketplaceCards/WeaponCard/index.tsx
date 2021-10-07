@@ -48,11 +48,11 @@ export const WeaponCard: FunctionComponent<WeaponCardProps> = (props) => {
 
   /* Regular variables */
 
-  const weaponId = props.weapon.itemAttributes.id.toString();
+  const weaponId = props.weapon.listId.toString();
   //const summonerClassSrc = props.summonerData.class ? ClassImageMap[classId] : null;
   //const summonerClassName = props.summonerData.class ? ClassMap[classId] : '';
 
-  const itemId = props.weapon.itemAttributes.id?.toString();
+  const weaponTypeId = props.weapon.itemAttributes.id?.toString();
 
   const divisor = BigNumber.from('1000000000000000000');
 
@@ -72,18 +72,20 @@ export const WeaponCard: FunctionComponent<WeaponCardProps> = (props) => {
   return (
     <MarketplaceItemCard className={classNames('weapon-card-wrapper', props.className)}
       itemName={props.weapon.itemAttributes.name}
-      itemId={itemId}
+      itemId={weaponId}
       priceText={price}
       currencyType='FTM'
       valuePairs={valuePairs}
-      topElement={(
+      topElement={props.weapon.itemAttributes.description && (
         <Fragment>
           <IconButton className='description-button' title='Description' onClick={() => setShowDesc(true)}>
             <InfoRounded className='description-icon' />
           </IconButton>
           <Backdrop className='description-backdrop' open={showDesc} onClick={() => setShowDesc(false)}>
-            <h2 className='description-header'>{props.weapon.itemAttributes.name} Description (#{itemId})</h2>
-            <div className='description-text'>{props.weapon.itemAttributes.description}</div>
+            <h2 className='description-header'>{props.weapon.itemAttributes.name} Description</h2>
+            <div className='description-text'>
+              {props.weapon.itemAttributes.description}
+            </div>
             <div className='close-button-row'>
               <Button className='close-button' variant='contained' onClick={() => setShowDesc(false)}>
                 Close
@@ -93,7 +95,7 @@ export const WeaponCard: FunctionComponent<WeaponCardProps> = (props) => {
         </Fragment>
       )}
       bottomElement={(
-        <Button id={`purchaseWeapon_${itemId}`} className='purchase-button' variant='contained'
+        <Button id={`purchaseWeapon_${weaponId}`} className='purchase-button' variant='contained'
             startIcon={<ShoppingCart />} onClick={handlePurchase}>
           Purchase
         </Button>

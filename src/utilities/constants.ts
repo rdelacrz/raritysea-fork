@@ -91,6 +91,13 @@ export enum WeaponSortBy {
   WEAPON_ID_LOW_TO_HIGH,
   WEAPON_ID_HIGH_TO_LOW,
   ATTR_DAMAGE,
+  ATTR_CRITICAL,
+  ATTR_CRITICAL_MOD,
+  ATTR_RANGE_INC,
+  ATTR_PROFICIENCY,
+  ATTR_ENCUMBRENCE,
+  ATTR_DAMAGE_TYPE,
+  ATTR_WEIGHT,
 }
 
 export const WeaponsSortByDropdownList = [
@@ -99,6 +106,13 @@ export const WeaponsSortByDropdownList = [
   'Weapon ID : Low to High',
   'Weapon ID : High to Low',
   'Attribute : DAMAGE',
+  'Attribute : CRITICAL',
+  'Attribute : CRITICAL MODIFIER',
+  'Attribute : RANGE INCREMENT',
+  'Attribute : PROFICIENCY',
+  'Attribute : ENCUMBRENCE',
+  'Attribute : DAMAGE TYPE',
+  'Attribute : WEIGHT',
 ];
 
 /**
