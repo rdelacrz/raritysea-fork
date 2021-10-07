@@ -5,6 +5,7 @@ import { Refresh } from '@material-ui/icons';
 import { DropdownField } from '@components';
 import { Page } from '@layouts';
 import { BaseItemType, useSummonerDataList } from '@utilities';
+import { ArmorMarketplace } from './ArmorMarketplace';
 import { SummonersMarketplace } from './SummonersMarketplace';
 import { WeaponsMarketplace } from './WeaponsMarketplace';
 
@@ -80,9 +81,7 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
         <WeaponsMarketplace />
       )}
       {marketplaceItemType === BaseItemType.ARMOR && (
-        <div>
-          Armor Marketplace Coming Soon
-        </div>
+        <ArmorMarketplace />
       )}
       {marketplaceItemType === BaseItemType.GOODS && (
         <div>

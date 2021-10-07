@@ -3,9 +3,9 @@
  */
 
 import { BigNumber } from '@ethersproject/bignumber';
-import { CraftedItemData, SummonerData, Weapon } from '@models';
+import { Armor, CraftedItemData, SummonerData, Weapon } from '@models';
 import Web3 from 'web3';
-import { SummonerSortBy, WeaponSortBy } from './constants';
+import { ArmorSortBy, SummonerSortBy, WeaponSortBy } from './constants';
 
 export const generateFtmContractLink = (address: string) => {
   return `https://ftmscan.com/address/${address}`;
@@ -84,9 +84,9 @@ export const getWeaponComparer = (sortBy: WeaponSortBy) => {
     case WeaponSortBy.PRICE_HIGH_TO_LOW:
       return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.price, w1.price);
     case WeaponSortBy.WEAPON_ID_LOW_TO_HIGH:
-      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w1.itemAttributes.id, w2.itemAttributes.id);
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w1.listId, w2.listId);
     case WeaponSortBy.WEAPON_ID_HIGH_TO_LOW:
-      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.id, w1.itemAttributes.id);
+      return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.listId, w1.listId);
     case WeaponSortBy.ATTR_DAMAGE:
       return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.damage, w1.itemAttributes.damage);
     case WeaponSortBy.ATTR_CRITICAL:
@@ -103,6 +103,31 @@ export const getWeaponComparer = (sortBy: WeaponSortBy) => {
       return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.damage_type, w1.itemAttributes.damage_type);
     case WeaponSortBy.ATTR_WEIGHT:
       return (w1: CraftedItemData<Weapon>, w2: CraftedItemData<Weapon>) => compareBigNumbers(w2.itemAttributes.weight, w1.itemAttributes.weight);
+    default:
+      return undefined;
+  }
+}
+
+export const getArmorComparer = (sortBy: ArmorSortBy) => {
+  switch (sortBy) {
+    case ArmorSortBy.PRICE_LOW_TO_HIGH:
+      return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a1.price, a2.price);
+    case ArmorSortBy.PRICE_HIGH_TO_LOW:
+      return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a2.price, a1.price);
+    case ArmorSortBy.ARMOR_ID_LOW_TO_HIGH:
+      return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a1.listId, a2.listId);
+    case ArmorSortBy.ARMOR_ID_HIGH_TO_LOW:
+      return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a2.listId, a1.listId);
+    case ArmorSortBy.ATTR_ARMOR_BONUS:
+      return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a2.itemAttributes.armor_bonus, a1.itemAttributes.armor_bonus);
+    case ArmorSortBy.ATTR_MAX_DEX_BONUS:
+      return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a2.itemAttributes.max_dex_bonus, a1.itemAttributes.max_dex_bonus);
+    case ArmorSortBy.ATTR_PENALTY:
+      return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a2.itemAttributes.penalty, a1.itemAttributes.penalty);
+    case ArmorSortBy.ATTR_SPELL_FAILURE:
+      return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a2.itemAttributes.spell_failure, a1.itemAttributes.spell_failure);
+    case ArmorSortBy.ATTR_WEIGHT:
+      return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a2.itemAttributes.weight, a1.itemAttributes.weight);
     default:
       return undefined;
   }

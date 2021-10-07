@@ -15,7 +15,7 @@ import {
 import {
   AbilityScore, Armor, ClassSkillSet, CraftedItem, CraftedItemDataSets, Good, ListAt, QueryResult, SummonerData, Weapon
 } from '@models';
-import { BaseItemType, SummonerClassList, WeaponsTypeCount } from '@utilities';
+import { ArmorTypeCount, BaseItemType, SummonerClassList, WeaponsTypeCount } from '@utilities';
 
 const MAX_QUERY_SIZE = 50;
 
@@ -184,6 +184,20 @@ export const useWeaponTypes = () => (
     return weapons
       .map(w => ({ text: w.name, value: w.id.toNumber() }))
       .sort((w1, w2) => w1.text.localeCompare(w2.text));
+  })
+);
+
+export const useArmorTypes = () => (
+  useQuery('getArmorTypes', async () => {
+    const armorTypes = Array(ArmorTypeCount).fill(0).map((_, i) => i + 1);
+
+    const armor = await provider.all(
+      armorTypes.map(id => armorContract.item_by_id(id) as Call)
+    ) as Weapon[];
+
+    return armor
+      .map(a => ({ text: a.name, value: a.id.toNumber() }))
+      .sort((a1, a2) => a1.text.localeCompare(a2.text));
   })
 );
 
