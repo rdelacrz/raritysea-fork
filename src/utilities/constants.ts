@@ -83,8 +83,9 @@ export enum BaseItemType {
   WEAPONS = 3
 }
 
-export const WeaponsTypeCount = 59;
+export const WeaponTypeCount = 59;
 export const ArmorTypeCount = 18;
+export const GoodTypeCount = 24;
 
 export enum WeaponSortBy {
   PRICE_LOW_TO_HIGH,
@@ -101,7 +102,7 @@ export enum WeaponSortBy {
   ATTR_WEIGHT,
 }
 
-export const WeaponsSortByDropdownList = [
+export const WeaponSortByDropdownList = [
   'Price : Low to High',
   'Price : High to Low',
   'Weapon ID : Low to High',
@@ -137,6 +138,18 @@ export const ArmorSortByDropdownList = [
   'Attribute : MAX DEX BONUS',
   'Attribute : PENALTY',
   'Attribute : SPELL FAILURE',
+  'Attribute : WEIGHT',
+];
+
+export enum GoodSortBy {
+  PRICE_LOW_TO_HIGH,
+  PRICE_HIGH_TO_LOW,
+  ATTR_WEIGHT,
+}
+
+export const GoodSortByDropdownList = [
+  'Price : Low to High',
+  'Price : High to Low',
   'Attribute : WEIGHT',
 ];
 

@@ -3,7 +3,7 @@ import classNames from 'classnames';
 import { ArmorDisplay } from '@components';
 import { Marketplace } from '@layouts';
 import { CraftedItemData, Armor } from '@models';
-import { getArmorComparer, useCraftedItems, useArmorTypes, ArmorSortBy, ArmorSortByDropdownList } from '@utilities';
+import { getArmorComparer, useCraftedItems, useArmorTypes, ArmorSortBy, ArmorSortByDropdownList, useBuyCraftedItem } from '@utilities';
 
 import './styles.scss';
 
@@ -15,10 +15,14 @@ export const ArmorMarketplace: FunctionComponent<ComponentProps> = (props) => {
   /* Hook variables */
   const { data: craftedItemDataSets, isLoading: isCraftedItemsLoading, isFetched: isCraftedItemsFetched } = useCraftedItems();
   const { data: armorTypes, isLoading: isArmorTypesLoading } = useArmorTypes();
+  const buyArmorMutation = useBuyCraftedItem();
 
   /* Functions */
   const handlePurchase = (armor: CraftedItemData<Armor>) => {
-    
+    buyArmorMutation.mutate({
+      price: armor.price,
+      listId: armor.listId,
+    });
   }
 
    // Constructs initial armors list using query results

@@ -2,20 +2,22 @@
  * Hooks to access various data.
  */
 
+import { Signer } from 'ethers';
 import { Call } from 'ethcall';
 import { BigNumber } from '@ethersproject/bignumber';
+import { Contract } from '@ethersproject/contracts';
 import { Web3Provider } from '@ethersproject/providers';
-import { useQuery, useInfiniteQuery } from 'react-query';
+import { useQueryClient, useQuery, useInfiniteQuery, useMutation } from 'react-query';
 import { useWeb3React } from '@web3-react/core';
 import {
-  useBuySummoner as useBuy,
-  summonersMarketContract, attributesContract, craftingContract, craftingMarketContract, rarityContract, goldContract,
-  skillsContract, skillsContractAlt, provider, goodsContract, armorContract, weaponsContract
+  summonersMarketContract, attributesContract, craftingContract, craftingMarketContract, rarityContract,
+  goldContract, skillsContract, skillsContractAlt, provider, goodsContract, armorContract, weaponsContract,
+  getSummonersContractWithSigner, getCraftingMarketContractWithSigner
 } from '@contracts';
 import {
   AbilityScore, Armor, ClassSkillSet, CraftedItem, CraftedItemDataSets, Good, ListAt, QueryResult, SummonerData, Weapon
 } from '@models';
-import { ArmorTypeCount, BaseItemType, SummonerClassList, WeaponsTypeCount } from '@utilities';
+import { ArmorTypeCount, BaseItemType, GoodTypeCount, SummonerClassList, WeaponTypeCount } from '@utilities';
 
 const MAX_QUERY_SIZE = 50;
 
@@ -175,7 +177,7 @@ export const useCraftedItems = () => (
 
 export const useWeaponTypes = () => (
   useQuery('getWeaponTypes', async () => {
-    const weaponTypes = Array(WeaponsTypeCount).fill(0).map((_, i) => i + 1);
+    const weaponTypes = Array(WeaponTypeCount).fill(0).map((_, i) => i + 1);
 
     const weapons = await provider.all(
       weaponTypes.map(id => weaponsContract.item_by_id(id) as Call)
@@ -201,7 +203,44 @@ export const useArmorTypes = () => (
   })
 );
 
-export const useBuySummoner = () => {
+export const useGoodTypes = () => (
+  useQuery('getGoodTypes', async () => {
+    const goodTypes = Array(GoodTypeCount).fill(0).map((_, i) => i + 1);
+
+    const goods = await provider.all(
+      goodTypes.map(id => goodsContract.item_by_id(id) as Call)
+    ) as Weapon[];
+
+    return goods
+      .map(g => ({ text: g.name, value: g.id.toNumber() }))
+      .sort((g1, g2) => g1.text.localeCompare(g2.text));
+  })
+);
+
+// Extended by whatever needs to use it
+const usePurchaseMutation = (mutationName: string, invalidationTarget: string, getContractFunc: (signer?: Signer) => Contract) => {
   const { library } = useWeb3React<Web3Provider>();
-  return useBuy(library?.getSigner())
+  const queryClient = useQueryClient();
+  return useMutation(mutationName,
+    (args: { price: BigNumber, listId: BigNumber }) => {
+      const buyersContract = getContractFunc(library?.getSigner());
+      const overrides = {
+        value: args.price.toString(),
+      };
+      return buyersContract['buy'](args.listId, overrides);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(invalidationTarget);
+      },
+    });
 }
+
+export const useBuySummoner = () => (
+  usePurchaseMutation('buySummoner', 'getAllSummoners', getSummonersContractWithSigner)
+)
+
+export const useBuyCraftedItem = () => (
+  usePurchaseMutation('buyCraftedItem', 'getCraftedItems', getCraftingMarketContractWithSigner)
+)
+

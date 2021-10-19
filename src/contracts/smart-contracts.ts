@@ -1,5 +1,6 @@
 import { providers, Signer } from 'ethers';
 import { Contract, Provider } from 'ethcall';
+import { Contract as EthersContract } from '@ethersproject/contracts';
 import Web3 from 'web3';
 import {
   armorContractAddress, armorContractAbi, attributesContractAddress, attributesContractAbi,
@@ -40,7 +41,10 @@ export const weaponsContract = new Contract(weaponsContractAddress, weaponsContr
 const web3 = new Web3(new Web3.providers.HttpProvider(compatibleRPCUrl));
 export const skillsContractAlt = new web3.eth.Contract(skillsContractAbi as any, skillsContractAddress);
 
-export const summonersContractFetcherWithSigner = <T>(method: string, ...args: any[]): Promise<T> => {
-  const contract = new Contract(summonersMarketContractAddress, summonersMarketContractAbi);
-  return contract[method](...args);
+export const getSummonersContractWithSigner = <T>(signer?: Signer) => {
+  return new EthersContract(summonersMarketContractAddress, summonersMarketContractAbi, signer);
+}
+
+export const getCraftingMarketContractWithSigner = <T>(signer?: Signer) => {
+  return new EthersContract(craftingMarketContractAddress, craftingMarketContractAbi, signer);
 }

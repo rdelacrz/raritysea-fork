@@ -1,0 +1,42 @@
+.good-card-wrapper {
+    position: relative;
+    background-color: #EEEEEE;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 16px);
+    padding: 10px;
+    .description-button {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    .purchase-button {
+        background-color: #4CAF50;
+        color: white;
+        width: 100%;
+        &:hover {
+            background-color: rgba(#4CAF50, 0.7);
+        }
+    }
+}
+
+.description-backdrop {
+    color: white;
+    flex-direction: column;
+    .description-header {
+        text-align: center;
+    }
+    .description-text {
+        max-width: 600px;
+    }
+    .close-button-row {
+        padding-top: 20px;
+        text-align: center;
+        .close-button {
+            background-color: #FF8C84;
+            color: white;
+            width: 100px;
+        }
+    }
+}

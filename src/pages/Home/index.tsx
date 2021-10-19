@@ -6,6 +6,7 @@ import { DropdownField } from '@components';
 import { Page } from '@layouts';
 import { BaseItemType, useSummonerDataList } from '@utilities';
 import { ArmorMarketplace } from './ArmorMarketplace';
+import { GoodsMarketplace } from './GoodsMarketplace';
 import { SummonersMarketplace } from './SummonersMarketplace';
 import { WeaponsMarketplace } from './WeaponsMarketplace';
 
@@ -84,9 +85,7 @@ export const HomePage: FunctionComponent<PageProps> = (props) => {
         <ArmorMarketplace />
       )}
       {marketplaceItemType === BaseItemType.GOODS && (
-        <div>
-          Goods Marketplace Coming Soon
-        </div>
+        <GoodsMarketplace />
       )}
 
     </Page>

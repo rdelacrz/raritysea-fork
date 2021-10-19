@@ -3,9 +3,9 @@
  */
 
 import { BigNumber } from '@ethersproject/bignumber';
-import { Armor, CraftedItemData, SummonerData, Weapon } from '@models';
+import { Armor, CraftedItemData, Good, SummonerData, Weapon } from '@models';
 import Web3 from 'web3';
-import { ArmorSortBy, SummonerSortBy, WeaponSortBy } from './constants';
+import { ArmorSortBy, GoodSortBy, SummonerSortBy, WeaponSortBy } from './constants';
 
 export const generateFtmContractLink = (address: string) => {
   return `https://ftmscan.com/address/${address}`;
@@ -128,6 +128,19 @@ export const getArmorComparer = (sortBy: ArmorSortBy) => {
       return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a2.itemAttributes.spell_failure, a1.itemAttributes.spell_failure);
     case ArmorSortBy.ATTR_WEIGHT:
       return (a1: CraftedItemData<Armor>, a2: CraftedItemData<Armor>) => compareBigNumbers(a2.itemAttributes.weight, a1.itemAttributes.weight);
+    default:
+      return undefined;
+  }
+}
+
+export const getGoodComparer = (sortBy: GoodSortBy) => {
+  switch (sortBy) {
+    case GoodSortBy.PRICE_LOW_TO_HIGH:
+      return (g1: CraftedItemData<Good>, g2: CraftedItemData<Good>) => compareBigNumbers(g1.price, g2.price);
+    case GoodSortBy.PRICE_HIGH_TO_LOW:
+      return (g1: CraftedItemData<Good>, g2: CraftedItemData<Good>) => compareBigNumbers(g2.price, g1.price);
+    case GoodSortBy.ATTR_WEIGHT:
+      return (g1: CraftedItemData<Good>, g2: CraftedItemData<Good>) => compareBigNumbers(g2.itemAttributes.weight, g1.itemAttributes.weight);
     default:
       return undefined;
   }

@@ -2,8 +2,8 @@ import { FunctionComponent, useMemo } from 'react';
 import classNames from 'classnames';
 import { WeaponDisplay } from '@components';
 import { Marketplace } from '@layouts';
-import { CraftedItemData, Weapon } from '@models';
-import { getWeaponComparer, useCraftedItems, useWeaponTypes, WeaponSortBy, WeaponsSortByDropdownList } from '@utilities';
+import { CraftedItem, CraftedItemData, Weapon } from '@models';
+import { getWeaponComparer, useCraftedItems, useWeaponTypes, WeaponSortBy, WeaponSortByDropdownList, useBuyCraftedItem } from '@utilities';
 
 import './styles.scss';
 
@@ -15,10 +15,14 @@ export const WeaponsMarketplace: FunctionComponent<ComponentProps> = (props) => 
   /* Hook variables */
   const { data: craftedItemDataSets, isLoading: isCraftedItemsLoading, isFetched: isCraftedItemsFetched } = useCraftedItems();
   const { data: weaponTypes, isLoading: isWeaponTypesLoading } = useWeaponTypes();
+  const buyWeaponMutation = useBuyCraftedItem();
 
   /* Functions */
   const handlePurchase = (weapon: CraftedItemData<Weapon>) => {
-    
+    buyWeaponMutation.mutate({
+      price: weapon.price,
+      listId: weapon.listId,
+    });
   }
 
    // Constructs initial weapons list using query results
@@ -31,7 +35,7 @@ export const WeaponsMarketplace: FunctionComponent<ComponentProps> = (props) => 
 
   // Sets up dropdown options
   const weaponTypeOptions = [{text: 'All Weapons', value: 0}].concat(weaponTypes || []);
-  const sortByOptions = WeaponsSortByDropdownList.map((text, value) => ({ text, value }));
+  const sortByOptions = WeaponSortByDropdownList.map((text, value) => ({ text, value }));
 
   return (
     <Marketplace
